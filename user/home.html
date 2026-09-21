@@ -27,16 +27,19 @@
     <!-- Main Scrollable Body Content -->
     <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px;">
       
-      <!-- Restaurant Info Header Card -->
-      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 20px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-          <div>
-            <span class="badge badge-ready" style="font-size: 0.7rem; margin-bottom: 6px;">● Buka Hari Ini</span>
-            <h2 style="font-size: 1.25rem; font-weight: 800;">Mie Gacoan - Sidoarjo Pabean</h2>
-            <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">Jl. Raya Pabean No. 88, Sedati • 08:00 - 24:00</p>
-          </div>
+      <!-- Hero Banner Image Section -->
+      <div style="width: 100%; border-radius: var(--radius-md); overflow: hidden; position: relative; box-shadow: var(--shadow-md);">
+        <img src="../asset/hero-banner.png" alt="Mie Gacoan Hero Banner" style="width: 100%; height: 180px; object-fit: cover; display: block;" onerror="this.src='../asset/Hero.png'" />
+        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(15,23,42,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; color: white;">
+          <span class="badge badge-ready" style="font-size: 0.7rem; margin-bottom: 6px; width: fit-content;">● Buka Hari Ini • Sidoarjo Pabean</span>
+          <h2 style="font-size: 1.35rem; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Mie Gacoan Sidoarjo Pabean</h2>
+          <p style="font-size: 0.8rem; color: #cbd5e1; text-shadow: 0 1px 2px rgba(0,0,0,0.6);">Solusi Santap Mie Pedas No. 1 di Indonesia</p>
         </div>
-        <div style="display: flex; gap: 10px; font-size: 0.8rem; color: #cbd5e1; border-top: 1px solid #334155; padding-top: 12px; margin-top: 4px;">
+      </div>
+
+      <!-- Restaurant Info Header Card -->
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 16px;">
+        <div style="display: flex; gap: 10px; font-size: 0.8rem; color: #cbd5e1; justify-content: space-between;">
           <span>⚡ Delivery Cepat</span> • <span>💳 Midtrans / QRIS / Cash</span> • <span>⭐ 4.9 (2.4k+)</span>
         </div>
       </div>

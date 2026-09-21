@@ -86,5 +86,49 @@ const Utils = {
   getOrderTypeBadge(type) {
     if (type === 'DINE_IN') return '<span class="badge badge-dinein">Dine In</span>';
     return '<span class="badge badge-takeaway">Take Away</span>';
+  },
+
+  // Dynamic Product Image Resolver with relative path fixing
+  getProductImage(imageUrl, slug) {
+    const slugMap = {
+      'mie-hompimpa': 'asset/miehompimpa.webp',
+      'mie-gacoan': 'asset/mie gacoan.webp',
+      'mie-suit': 'asset/miesuit.webp',
+      'udang-keju': 'asset/udangkeju.webp',
+      'udang-rambutan': 'asset/udahngrambutan.webp',
+      'siomay-udang': 'asset/siomay.webp',
+      'lumpia-udang': 'asset/lumpiaudang.webp',
+      'pangsit-goreng-extra': 'asset/pangsitgoreng.webp',
+      'es-gobak-sodor': 'asset/esgobaksodor.webp',
+      'es-teklek': 'asset/thaitea.webp',
+      'es-sluku-bathok': 'asset/thaigreentea.webp',
+      'es-petak-sumpet': 'asset/orange.webp',
+      'teh-manis-dingin': 'asset/Tea.webp',
+      'lemon-tea': 'asset/lemontea.webp',
+      'air-mineral-600ml': 'asset/airmineral.webp',
+      'paket-mantap-hompimpa': 'asset/hero-banner.png'
+    };
+
+    let target = imageUrl || slugMap[slug] || 'asset/hero-banner.png';
+
+    // If image URL is an external link (http/https), return as is
+    if (target.startsWith('http://') || target.startsWith('https://')) {
+      return target;
+    }
+
+    // Determine path prefix based on depth of current document
+    const isSubdir = window.location.pathname.includes('/user/') ||
+                     window.location.pathname.includes('/cashier/') ||
+                     window.location.pathname.includes('/kitchen/') ||
+                     window.location.pathname.includes('/admin/');
+
+    if (isSubdir && !target.startsWith('../')) {
+      return '../' + target.replace(/^\//, '');
+    } else if (!isSubdir && target.startsWith('../')) {
+      return target.replace(/^\.\.\//, '');
+    }
+
+    return target;
   }
 };
+

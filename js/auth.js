@@ -19,7 +19,12 @@ const AuthModule = {
       }
     });
 
-    if (error) throw error;
+    if (error) {
+      if (error.message && error.message.includes("Failed to fetch")) {
+        throw new Error("Gagal terhubung ke Supabase. Harap isi SUPABASE_ANON_KEY di js/config.js dengan Anon Key proyek Anda (Supabase Dashboard -> Project Settings -> API).");
+      }
+      throw error;
+    }
     return data;
   },
 
@@ -27,7 +32,12 @@ const AuthModule = {
   async login({ email, password }) {
     const sb = getSupabase();
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    if (error) {
+      if (error.message && error.message.includes("Failed to fetch")) {
+        throw new Error("Gagal terhubung ke Supabase. Harap isi SUPABASE_ANON_KEY di js/config.js dengan Anon Key proyek Anda (Supabase Dashboard -> Project Settings -> API).");
+      }
+      throw error;
+    }
 
     const profile = await getCurrentUserProfile();
     return { session: data.session, profile };

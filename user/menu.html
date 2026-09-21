@@ -157,7 +157,7 @@
 
       grid.innerHTML = filtered.map(p => `
         <div class="card" style="display: flex; gap: 12px; align-items: center; padding: 12px;">
-          <img src="${p.image_url || 'https://via.placeholder.com/80'}" style="width: 85px; height: 85px; object-fit: cover; border-radius: var(--radius-md);" />
+          <img src="${Utils.getProductImage(p.image_url, p.slug)}" style="width: 85px; height: 85px; object-fit: cover; border-radius: var(--radius-md);" onerror="this.src='../asset/hero-banner.png'" />
           <div style="flex: 1;">
             <h4 style="font-size: 0.95rem; font-weight: 800;">${p.name}</h4>
             <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">${p.description || ''}</p>
@@ -202,7 +202,7 @@
       document.getElementById("modalTitle").innerText = selectedProduct.name;
       document.getElementById("modalPrice").innerText = Utils.formatRupiah(selectedProduct.base_price);
       document.getElementById("modalDesc").innerText = selectedProduct.description || '';
-      document.getElementById("modalImg").src = selectedProduct.image_url || 'https://via.placeholder.com/80';
+      document.getElementById("modalImg").src = Utils.getProductImage(selectedProduct.image_url, selectedProduct.slug);
       document.getElementById("modalNotes").value = '';
 
       const isMie = selectedProduct.categories?.slug === 'mie';

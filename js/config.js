@@ -6,8 +6,8 @@
 window.APP_CONFIG = {
   // Supabase Connection (Publishable / Anon key ONLY)
   // Ensure your Supabase project keys are replaced when linking a real project instance
-  SUPABASE_URL: window.env?.SUPABASE_URL || "https://your-supabase-project.supabase.co",
-  SUPABASE_ANON_KEY: window.env?.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRlc3QiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTYwMDAwMDAwMCwiZXhwIjoyMDAwMDAwMDAwfQ.placeholder",
+  SUPABASE_URL: window.env?.SUPABASE_URL || "https://rnlhdmtsnycbbgebtuod.supabase.co",
+  SUPABASE_ANON_KEY: window.env?.SUPABASE_ANON_KEY || "sb_publishable_mugo3FekocnwATXS5Lsqnw_9yHRgvDJ",
 
   // Midtrans Snap Client Key (Client Key ONLY - Safe for frontend UMD)
   MIDTRANS_CLIENT_KEY: window.env?.MIDTRANS_CLIENT_KEY || "SB-Mid-client-demo123456",
