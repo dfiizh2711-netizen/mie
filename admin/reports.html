@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Laporan Penjualan - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Laporan Penjualan & Performa Restoran</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.25rem; font-weight: 800;">📈 Laporan Ringkasan Penjualan</h2>
+      <button onclick="window.print()" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.8rem;">🖨️ Cetak Laporan</button>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+      <div class="card card-dark">
+        <span style="font-size: 0.8rem; color: #94a3b8;">TOTAL REVENUE</span>
+        <h2 id="repTotalRev" style="font-size: 2rem; font-weight: 900; color: var(--accent-green); margin-top: 4px;">Rp 0</h2>
+      </div>
+      <div class="card card-dark">
+        <span style="font-size: 0.8rem; color: #94a3b8;">TRANSAKSI DINE IN</span>
+        <h2 id="repDineInCnt" style="font-size: 2rem; font-weight: 900; color: #3b82f6; margin-top: 4px;">0</h2>
+      </div>
+      <div class="card card-dark">
+        <span style="font-size: 0.8rem; color: #94a3b8;">TRANSAKSI TAKE AWAY</span>
+        <h2 id="repTakeAwayCnt" style="font-size: 2rem; font-weight: 900; color: var(--accent-orange); margin-top: 4px;">0</h2>
+      </div>
+    </div>
+
+    <!-- Sales Data Table -->
+    <div class="card card-dark">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Rincian Transaksi Penjualan</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No Order</th>
+              <th>Tipe</th>
+              <th>Subtotal</th>
+              <th>Diskon</th>
+              <th>Pajak</th>
+              <th>Grand Total</th>
+              <th>Tanggal</th>
+            </tr>
+          </thead>
+          <tbody id="reportsTableBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadReports();
+    });
+
+    async function loadReports() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("reportsTableBody");
+
+      const { data: orders } = await sb
+        .from("orders")
+        .select("*")
+        .eq("payment_status", "PAID")
+        .order("created_at", { ascending: false });
+
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">Belum ada data penjualan</td></tr>`;
+        return;
+      }
+
+      let totalRev = 0, dineIn = 0, takeAway = 0;
+
+      orders.forEach(o => {
+        totalRev += Number(o.grand_total);
+        if (o.order_type === "DINE_IN") dineIn++;
+        else takeAway++;
+      });
+
+      document.getElementById("repTotalRev").innerText = Utils.formatRupiah(totalRev);
+      document.getElementById("repDineInCnt").innerText = dineIn;
+      document.getElementById("repTakeAwayCnt").innerText = takeAway;
+
+      tbody.innerHTML = orders.map(o => `
+        <tr>
+          <td style="font-family: monospace; font-weight: 700;">#${o.order_number}</td>
+          <td>${Utils.getOrderTypeBadge(o.order_type)}</td>
+          <td>${Utils.formatRupiah(o.subtotal)}</td>
+          <td style="color: var(--accent-green);">${Utils.formatRupiah(o.discount_amount)}</td>
+          <td>${Utils.formatRupiah(o.tax_amount)}</td>
+          <td style="font-weight: 800; color: white;">${Utils.formatRupiah(o.grand_total)}</td>
+          <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(o.created_at)}</td>
+        </tr>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

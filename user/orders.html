@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Riwayat Pesanan - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <h1 class="header-title">Riwayat Pesanan Saya</h1>
+      <a href="home.html" class="icon-btn">🏠</a>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 90px;">
+      <div id="ordersContainer" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- JS Rendered Orders -->
+      </div>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); display: grid; grid-template-columns: repeat(4, 1fr); padding: 10px 0; z-index: 80; text-align: center;">
+      <a href="home.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">🏠</div>Beranda
+      </a>
+      <a href="menu.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">🍜</div>Menu
+      </a>
+      <a href="orders.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">📜</div>Pesanan
+      </a>
+      <a href="profile.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">👤</div>Profil
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadUserOrders();
+    });
+
+    async function loadUserOrders() {
+      const sb = getSupabase();
+      const user = await getCurrentUserProfile();
+      const container = document.getElementById("ordersContainer");
+
+      let query = sb.from("orders").select("*, tables(table_number)").order("created_at", { ascending: false });
+      if (user) {
+        query = query.eq("user_id", user.id);
+      } else {
+        // Show recent active branch orders if guest
+        query = query.eq("branch_id", window.APP_CONFIG.DEFAULT_BRANCH_ID).limit(10);
+      }
+
+      const { data: orders, error } = await query;
+
+      if (error || !orders || orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span style="font-size: 3.5rem;">📜</span>
+            <div class="empty-state-title">Belum Ada Pesanan</div>
+            <p>Pesanan yang Anda buat akan muncul di sini.</p>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin-top: 16px;">Pesan Sekarang</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(o => {
+        const badgeInfo = Utils.getOrderStatusBadge(o.order_status);
+        return `
+          <a href="order-detail.html?id=${o.id}" class="card" style="display: block;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+              <div>
+                <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">#${o.order_number}</span>
+                <div style="display: flex; gap: 6px; align-items: center; margin-top: 2px;">
+                  ${Utils.getOrderTypeBadge(o.order_type)}
+                  ${o.tables?.table_number ? `<span class="badge badge-dinein">${o.tables.table_number}</span>` : ''}
+                </div>
+              </div>
+              <span class="badge ${badgeInfo.class}">${badgeInfo.label}</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+              <div>
+                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">${Utils.formatDateTime(o.created_at)}</span>
+                ${o.queue_number ? `<span style="font-weight: 900; font-size: 1.1rem; color: var(--primary-pink);">Antrean: ${o.queue_number}</span>` : ''}
+              </div>
+              <strong style="font-size: 1.05rem; color: var(--text-primary);">${Utils.formatRupiah(o.grand_total)}</strong>
+            </div>
+          </a>
+        `;
+      }).join("");
+    }
+  </script>
+</body>
+</html>

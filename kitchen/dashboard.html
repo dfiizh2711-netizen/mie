@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kitchen Display System (KDS) - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container" style="overflow-y: hidden; height: 100vh;">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 12px 24px; background: #0f172a;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-orange), #f57c00);">KDS</span>
+      <span>Kitchen Display System - Mie Gacoan</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span id="kdsTimeClock" style="font-weight: 800; font-size: 1.1rem; color: #cbd5e1;">-</span>
+      <span id="kdsStaffUser" style="font-size: 0.85rem; color: #94a3b8;">Tim Dapur</span>
+      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar">🚪</button>
+    </div>
+  </header>
+
+  <!-- KDS 3 Column Kanban Tickets Grid -->
+  <div class="kds-grid" style="grid-template-columns: repeat(3, 1fr); height: calc(100vh - 60px);">
+    
+    <!-- COLUMN 1: NEW TICKETS -->
+    <div class="kds-column">
+      <div class="kds-col-header" style="background: #1e293b; color: var(--accent-orange); border-bottom: 2px solid var(--accent-orange);">
+        <span>🔥 TIKET BARU (NEW)</span>
+        <span id="cntKdsNew" class="badge badge-pending">0</span>
+      </div>
+      <div id="colKdsNew" class="kds-ticket-list">
+        <!-- JS Rendered -->
+      </div>
+    </div>
+
+    <!-- COLUMN 2: PREPARING / COOKING -->
+    <div class="kds-column">
+      <div class="kds-col-header" style="background: #1e293b; color: #3b82f6; border-bottom: 2px solid #3b82f6;">
+        <span>🍳 SEDANG DIMASAK (PREPARING)</span>
+        <span id="cntKdsPreparing" class="badge badge-preparing">0</span>
+      </div>
+      <div id="colKdsPreparing" class="kds-ticket-list">
+        <!-- JS Rendered -->
+      </div>
+    </div>
+
+    <!-- COLUMN 3: READY FOR PICKUP -->
+    <div class="kds-column">
+      <div class="kds-col-header" style="background: #1e293b; color: var(--accent-green); border-bottom: 2px solid var(--accent-green);">
+        <span>✅ SIAP SAJI (READY)</span>
+        <span id="cntKdsReady" class="badge badge-ready">0</span>
+      </div>
+      <div id="colKdsReady" class="kds-ticket-list">
+        <!-- JS Rendered -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/realtime.js"></script>
+  <script>
+    let kdsTickets = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const profile = await AuthModule.requireRole(["DAPUR", "ADMIN", "KASIR"]);
+      if (profile) document.getElementById("kdsStaffUser").innerText = profile.full_name;
+
+      startKdsClock();
+      await loadKdsTickets();
+
+      RealtimeManager.subscribeKitchenTickets(() => loadKdsTickets());
+    });
+
+    function startKdsClock() {
+      setInterval(() => {
+        document.getElementById("kdsTimeClock").innerText = new Date().toLocaleTimeString('id-ID');
+        renderTicketTimers();
+      }, 1000);
+    }
+
+    async function loadKdsTickets() {
+      const sb = getSupabase();
+      const { data: list } = await sb
+        .from("kitchen_orders")
+        .select("*, orders(*, tables(table_number), order_items(*))")
+        .in("status", ["NEW", "PREPARING", "READY"])
+        .order("created_at", { ascending: true });
+
+      kdsTickets = list || [];
+      renderKdsColumns();
+    }
+
+    function renderKdsColumns() {
+      const colNew = document.getElementById("colKdsNew");
+      const colPrep = document.getElementById("colKdsPreparing");
+      const colReady = document.getElementById("colKdsReady");
+
+      const newTickets = kdsTickets.filter(t => t.status === "NEW");
+      const prepTickets = kdsTickets.filter(t => t.status === "PREPARING");
+      const readyTickets = kdsTickets.filter(t => t.status === "READY");
+
+      document.getElementById("cntKdsNew").innerText = newTickets.length;
+      document.getElementById("cntKdsPreparing").innerText = prepTickets.length;
+      document.getElementById("cntKdsReady").innerText = readyTickets.length;
+
+      colNew.innerHTML = newTickets.map(t => renderTicketCard(t, "NEW")).join("");
+      colPrep.innerHTML = prepTickets.map(t => renderTicketCard(t, "PREPARING")).join("");
+      colReady.innerHTML = readyTickets.map(t => renderTicketCard(t, "READY")).join("");
+
+      renderTicketTimers();
+    }
+
+    function renderTicketCard(t, colType) {
+      const order = t.orders || {};
+      const items = order.order_items || [];
+      const queueNum = order.queue_number || 'A000';
+
+      return `
+        <div class="kds-ticket ${colType.toLowerCase()}" data-created="${t.created_at}">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div>
+              <div class="kds-queue-big">${queueNum}</div>
+              <div style="font-size: 0.85rem; font-weight: 700; margin-top: 2px;">
+                ${Utils.getOrderTypeBadge(order.order_type)}
+                ${order.tables?.table_number ? `<span class="badge badge-dinein">${order.tables.table_number}</span>` : ''}
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="elapsed-timer" style="font-weight: 900; font-size: 1rem; color: var(--accent-orange);">00:00</span>
+              <div style="font-size: 0.75rem; color: #94a3b8; font-family: monospace;">#${order.order_number || ''}</div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px dashed #334155; padding-top: 10px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+            ${items.map(item => `
+              <div style="display: flex; justify-content: space-between; font-size: 0.95rem;">
+                <strong style="color: #f8fafc;">${item.quantity}x ${item.product_name}</strong>
+                ${item.notes ? `<span style="font-size: 0.75rem; color: var(--primary-pink); font-style: italic;">(${item.notes})</span>` : ''}
+              </div>
+            `).join("")}
+          </div>
+
+          <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #334155;">
+            ${colType === 'NEW' ? `
+              <button onclick="updateTicketStatus('${t.id}', 'PREPARING', '${order.id}')" class="btn btn-primary" style="padding: 10px; font-size: 0.9rem;">
+                ▶ MULAI MASAK (START)
+              </button>
+            ` : ''}
+
+            ${colType === 'PREPARING' ? `
+              <button onclick="updateTicketStatus('${t.id}', 'READY', '${order.id}')" class="btn btn-success" style="padding: 10px; font-size: 0.9rem;">
+                ✓ TANDAI SIAP SAJI (MARK READY)
+              </button>
+            ` : ''}
+
+            ${colType === 'READY' ? `
+              <button onclick="updateTicketStatus('${t.id}', 'COMPLETED', '${order.id}')" class="btn btn-dark" style="padding: 8px; font-size: 0.8rem; background: #334155;">
+                ✓ Selesai Diambil
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTicketTimers() {
+      document.querySelectorAll(".kds-ticket").forEach(card => {
+        const created = card.getAttribute("data-created");
+        if (!created) return;
+
+        const diffSec = Math.floor((new Date() - new Date(created)) / 1000);
+        const mins = Math.floor(diffSec / 60).toString().padStart(2, '0');
+        const secs = (diffSec % 60).toString().padStart(2, '0');
+
+        const timerEl = card.querySelector(".elapsed-timer");
+        if (timerEl) {
+          timerEl.innerText = `${mins}:${secs}`;
+          if (diffSec > 600) timerEl.style.color = "var(--accent-red)";
+        }
+      });
+    }
+
+    async function updateTicketStatus(ticketId, newStatus, orderId) {
+      const sb = getSupabase();
+      
+      const payload = { status: newStatus };
+      if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
+      if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
+
+      await sb.from("kitchen_orders").update(payload).eq("id", ticketId);
+
+      // Sync master order status
+      await sb.from("orders").update({ order_status: newStatus }).eq("id", orderId);
+
+      Utils.showToast(`Tiket Dapur diupdate: ${newStatus}`, "success");
+      loadKdsTickets();
+    }
+  </script>
+</body>
+</html>

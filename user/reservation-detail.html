@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Detail Reservasi - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="profile.html" class="icon-btn">←</a>
+        <h1 class="header-title">Detail Reservasi Meja</h1>
+      </div>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+      
+      <!-- Status Card -->
+      <div class="card" style="text-align: center; padding: 20px;">
+        <div id="resStatusBadge" class="badge badge-pending" style="margin-bottom: 10px; font-size: 0.85rem; padding: 6px 14px;">
+          PENDING
+        </div>
+        <h3 id="resTableTitle" style="font-size: 1.25rem; font-weight: 800;">-</h3>
+        <p id="resDateTime" style="font-size: 0.9rem; color: var(--primary-pink); font-weight: 700; margin-top: 4px;"></p>
+      </div>
+
+      <!-- Information Details -->
+      <div class="card" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">Nama Pemesan</span>
+          <strong id="resName">-</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">WhatsApp</span>
+          <strong id="resPhone">-</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">Jumlah Tamu</span>
+          <strong id="resGuest">-</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">Catatan</span>
+          <span id="resNotes" style="font-style: italic;">-</span>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div id="cancelActionArea">
+        <button onclick="cancelReservation()" id="btnCancelRes" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2;">
+          ❌ Batalkan Reservasi
+        </button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let resId = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      resId = urlParams.get("id");
+
+      if (!resId) {
+        window.location.href = "profile.html";
+        return;
+      }
+
+      await loadReservationDetail();
+    });
+
+    async function loadReservationDetail() {
+      const sb = getSupabase();
+      const { data: res, error } = await sb
+        .from("reservations")
+        .select("*, tables(table_number)")
+        .eq("id", resId)
+        .single();
+
+      if (error || !res) {
+        Utils.showToast("Data reservasi tidak ditemukan", "error");
+        setTimeout(() => window.location.href = "profile.html", 1500);
+        return;
+      }
+
+      const badge = document.getElementById("resStatusBadge");
+      badge.innerText = res.status;
+      if (res.status === "CONFIRMED") badge.className = "badge badge-paid";
+      if (res.status === "CANCELLED") badge.className = "badge badge-cancelled";
+
+      document.getElementById("resTableTitle").innerText = res.tables?.table_number || "Meja Restoran";
+      document.getElementById("resDateTime").innerText = `📅 ${res.reservation_date} • 🕒 ${res.reservation_time}`;
+      document.getElementById("resName").innerText = res.customer_name;
+      document.getElementById("resPhone").innerText = res.customer_phone;
+      document.getElementById("resGuest").innerText = `${res.guest_count} Orang`;
+      document.getElementById("resNotes").innerText = res.notes || "-";
+
+      if (res.status === "CANCELLED" || res.status === "COMPLETED") {
+        document.getElementById("cancelActionArea").style.display = "none";
+      }
+    }
+
+    async function cancelReservation() {
+      if (!confirm("Apakah Anda yakin ingin membatalkan reservasi meja ini?")) return;
+
+      const sb = getSupabase();
+      await sb.from("reservations").update({ status: "CANCELLED" }).eq("id", resId);
+      Utils.showToast("Reservasi Berhasil Dibatalkan", "success");
+      loadReservationDetail();
+    }
+  </script>
+</body>
+</html>

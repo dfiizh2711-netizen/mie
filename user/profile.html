@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Profil Saya - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <h1 class="header-title">Profil Saya</h1>
+      <a href="home.html" class="icon-btn">🏠</a>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px;">
+      
+      <!-- Profile Info Header Card -->
+      <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-pink), #ff4081); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900;">
+          👤
+        </div>
+        <div>
+          <h3 id="profName" style="font-size: 1.1rem; font-weight: 800;">Tamu / Guest</h3>
+          <p id="profEmail" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Belum login</p>
+          <span id="profRoleBadge" class="badge badge-dinein" style="font-size: 0.7rem; margin-top: 6px;">USER</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Navigation Menu -->
+      <div class="card" style="display: flex; flex-direction: column; gap: 4px; padding: 8px 16px;">
+        <a href="orders.html" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.9rem;">
+          <span>📜 Riwayat Pesanan Makanan</span>
+          <span>→</span>
+        </a>
+        <a href="reservation.html" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.9rem;">
+          <span>📅 Reservasi Meja Restoran</span>
+          <span>→</span>
+        </a>
+        <a href="../login.html" id="authLink" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-weight: 600; font-size: 0.9rem; color: var(--primary-pink);">
+          <span>🔑 Login / Switch Akun</span>
+          <span>→</span>
+        </a>
+      </div>
+
+      <!-- Active Reservations Section -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">📌 Reservasi Meja Aktif</h4>
+        <div id="userReservationsList" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- JS Rendered Reservations -->
+        </div>
+      </div>
+
+      <!-- Logout Button (Shown when logged in) -->
+      <div id="logoutSection" style="display: none;">
+        <button onclick="AuthModule.logout()" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2;">
+          🚪 Keluar Akun (Logout)
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); display: grid; grid-template-columns: repeat(4, 1fr); padding: 10px 0; z-index: 80; text-align: center;">
+      <a href="home.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">🏠</div>Beranda
+      </a>
+      <a href="menu.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">🍜</div>Menu
+      </a>
+      <a href="orders.html" style="color: var(--text-secondary); font-weight: 600; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">📜</div>Pesanan
+      </a>
+      <a href="profile.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.75rem;">
+        <div style="font-size: 1.2rem;">👤</div>Profil
+      </a>
+    </nav>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadProfile();
+      await loadReservations();
+    });
+
+    async function loadProfile() {
+      const profile = await getCurrentUserProfile();
+      if (profile) {
+        document.getElementById("profName").innerText = profile.full_name || "User";
+        document.getElementById("profEmail").innerText = profile.email || profile.phone || "";
+        document.getElementById("profRoleBadge").innerText = profile.role;
+        document.getElementById("logoutSection").style.display = "block";
+      }
+    }
+
+    async function loadReservations() {
+      const sb = getSupabase();
+      const user = await getCurrentUserProfile();
+      const container = document.getElementById("userReservationsList");
+
+      let query = sb.from("reservations").select("*, tables(table_number)").order("reservation_date", { ascending: false });
+      if (user) {
+        query = query.eq("user_id", user.id);
+      } else {
+        query = query.limit(5);
+      }
+
+      const { data: list } = await query;
+
+      if (!list || list.length === 0) {
+        container.innerHTML = `<div style="font-size: 0.85rem; color: var(--text-muted); text-align: center; padding: 12px;">Belum ada reservasi meja</div>`;
+        return;
+      }
+
+      container.innerHTML = list.map(r => `
+        <a href="reservation-detail.html?id=${r.id}" style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 0.85rem;">
+          <div>
+            <strong>${r.tables?.table_number || 'Meja Restoran'}</strong>
+            <div style="font-size: 0.75rem; color: var(--text-secondary);">${r.reservation_date} • ${r.reservation_time}</div>
+          </div>
+          <span class="badge ${r.status === 'CONFIRMED' ? 'badge-paid' : 'badge-pending'}">${r.status}</span>
+        </a>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

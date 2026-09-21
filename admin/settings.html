@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Pengaturan Sistem - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Pengaturan Konfigurasi Sistem</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 600px;">
+    
+    <div class="card card-dark">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">⚙️ Konfigurasi Pajak & Layanan Restoran</h3>
+
+      <form id="settingsForm" style="display: flex; flex-direction: column; gap: 14px;">
+        
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Pajak Restoran PB1 (%) *</label>
+          <input type="number" id="setTax" step="0.01" required value="10" class="card card-dark" style="width: 100%; padding: 10px;" />
+          <span style="font-size: 0.75rem; color: #94a3b8;">Persentase pajak PB1 (default: 10%)</span>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Service Charge Layanan (%) *</label>
+          <input type="number" id="setService" step="0.01" required value="5" class="card card-dark" style="width: 100%; padding: 10px;" />
+          <span style="font-size: 0.75rem; color: #94a3b8;">Biaya layanan service charge (default: 5%)</span>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Nama Cabang Restoran</label>
+          <input type="text" id="setBranchName" required value="Mie Gacoan - Sidoarjo Pabean" class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Simpan Perubahan Pengaturan</button>
+
+      </form>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadSettings();
+    });
+
+    async function loadSettings() {
+      const sb = getSupabase();
+      const { data: tax } = await sb.from("settings").select("value").eq("key", "tax_rate").single();
+      const { data: service } = await sb.from("settings").select("value").eq("key", "service_charge_rate").single();
+
+      if (tax) document.getElementById("setTax").value = (parseFloat(tax.value) * 100).toFixed(0);
+      if (service) document.getElementById("setService").value = (parseFloat(service.value) * 100).toFixed(0);
+    }
+
+    document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const sb = getSupabase();
+      const taxRate = parseFloat(document.getElementById("setTax").value) / 100;
+      const serviceRate = parseFloat(document.getElementById("setService").value) / 100;
+
+      await sb.from("settings").upsert({ key: "tax_rate", value: JSON.stringify(taxRate.toString()) });
+      await sb.from("settings").upsert({ key: "service_charge_rate", value: JSON.stringify(serviceRate.toString()) });
+
+      Utils.showToast("Pengaturan sistem berhasil diperbarui", "success");
+    });
+  </script>
+</body>
+</html>

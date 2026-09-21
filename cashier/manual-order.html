@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kasir POS - Manual Order - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container" style="overflow-y: hidden; height: 100vh;">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 10px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge">POS</span>
+      <span>Input Order Manual Walk-In</span>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Kembali ke Dashboard</a>
+    </div>
+  </header>
+
+  <!-- Split Screen POS Layout -->
+  <div style="display: flex; height: calc(100vh - 60px);">
+    
+    <!-- LEFT PANEL: Menu Catalog & Categories (65% width) -->
+    <div style="flex: 1.8; border-right: 1px solid #334155; display: flex; flex-direction: column; background: #0f172a;">
+      
+      <!-- Category Tabs & Search Bar -->
+      <div style="padding: 12px 16px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; gap: 12px; align-items: center;">
+        <input type="text" id="posSearch" oninput="onPosSearch(this.value)" placeholder="🔍 Cari menu makanan / minuman..." class="card card-dark" style="flex: 1; padding: 8px 12px; font-size: 0.85rem;" />
+        
+        <div style="display: flex; gap: 6px;">
+          <button onclick="filterPosCat('all')" id="posCat-all" class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">Semua</button>
+          <button onclick="filterPosCat('mie')" id="posCat-mie" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🍜 Mie</button>
+          <button onclick="filterPosCat('dimsum')" id="posCat-dimsum" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🥟 Dimsum</button>
+          <button onclick="filterPosCat('minuman')" id="posCat-minuman" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🧋 Minuman</button>
+          <button onclick="filterPosCat('snack')" id="posCat-snack" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🍟 Snack</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Product Grid -->
+      <div id="posProductGrid" style="padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; overflow-y: auto;">
+        <!-- JS Rendered Products -->
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Cart & Billing Checkout (35% width) -->
+    <div style="flex: 1; display: flex; flex-direction: column; background: #1e293b; border-left: 1px solid #334155;">
+      
+      <!-- Order Type & Table Switcher Bar -->
+      <div style="padding: 12px 16px; border-bottom: 1px solid #334155; background: #0f172a; display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 6px;">
+          <button id="posBtnDineIn" onclick="setPosOrderType('DINE_IN')" class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">Dine In</button>
+          <button id="posBtnTakeAway" onclick="setPosOrderType('TAKE_AWAY')" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">Take Away</button>
+        </div>
+
+        <select id="posTableSelect" class="card card-dark" style="width: auto; padding: 6px 10px; font-size: 0.8rem;">
+          <option value="">-- Pilih Meja --</option>
+        </select>
+      </div>
+
+      <!-- POS Items Cart Stream -->
+      <div id="posCartItems" style="flex: 1; padding: 12px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+        <!-- JS Rendered Items -->
+      </div>
+
+      <!-- Billing Summary & Payment Calculator -->
+      <div style="padding: 16px; border-top: 1px solid #334155; background: #0f172a; display: flex; flex-direction: column; gap: 10px;">
+        
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8;">
+          <span>Subtotal</span>
+          <span id="posSubtotal">Rp 0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #94a3b8;">
+          <span>Pajak (10%) & Service (5%)</span>
+          <span id="posTaxService">Rp 0</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 900; color: white;">
+          <span>TOTAL</span>
+          <span id="posGrandTotal" style="color: var(--primary-pink);">Rp 0</span>
+        </div>
+
+        <!-- Payment Method Selection -->
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button onclick="setPosPaymentMethod('CASH')" id="payMethod-CASH" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.8rem;">💵 Tunai (Cash)</button>
+          <button onclick="setPosPaymentMethod('QRIS')" id="payMethod-QRIS" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;">📱 QRIS</button>
+          <button onclick="setPosPaymentMethod('DEBIT')" id="payMethod-DEBIT" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;">💳 Debit</button>
+        </div>
+
+        <!-- Cash Amount Received & Change Calculator -->
+        <div id="cashCalculator" style="display: flex; gap: 8px; align-items: center;">
+          <input type="number" id="cashReceivedInput" oninput="calculateCashChange()" placeholder="Uang Diterima (Rp)" class="card card-dark" style="flex: 1; padding: 8px 12px; font-size: 0.85rem;" />
+          <span style="font-size: 0.8rem; color: #94a3b8;">Kembali: <strong id="cashChangeVal" style="color: var(--accent-green);">Rp 0</strong></span>
+        </div>
+
+        <button onclick="submitPosOrder()" id="btnSubmitPos" class="btn btn-success" style="padding: 14px; font-size: 1rem; font-weight: 800; margin-top: 4px;">
+          🖨️ Cetak Antrean & Selesaikan Order
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let posProducts = [];
+    let posCart = [];
+    let activePosCategory = 'all';
+    let posOrderType = 'DINE_IN';
+    let posPaymentMethod = 'CASH';
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["KASIR", "ADMIN"]);
+      await loadPosProducts();
+      await loadPosTables();
+    });
+
+    async function loadPosProducts() {
+      const sb = getSupabase();
+      const { data } = await sb.from("products").select("*, categories(*)").eq("is_active", true);
+      posProducts = data || [];
+      renderPosProducts();
+    }
+
+    async function loadPosTables() {
+      const sb = getSupabase();
+      const { data: tables } = await sb.from("tables").select("*").eq("branch_id", window.APP_CONFIG.DEFAULT_BRANCH_ID);
+      const select = document.getElementById("posTableSelect");
+      if (tables) {
+        select.innerHTML = '<option value="">-- Pilih Meja --</option>' + tables.map(t => `
+          <option value="${t.id}">${t.table_number}</option>
+        `).join("");
+      }
+    }
+
+    function renderPosProducts(query = "") {
+      const grid = document.getElementById("posProductGrid");
+      let filtered = posProducts;
+
+      if (activePosCategory !== 'all') {
+        filtered = filtered.filter(p => p.categories?.slug === activePosCategory);
+      }
+
+      if (query.trim() !== "") {
+        const q = query.toLowerCase();
+        filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <div onclick="addPosItem('${p.id}')" class="card card-dark" style="cursor: pointer; padding: 10px; display: flex; flex-direction: column; justify-content: space-between;">
+          <img src="${p.image_url || 'https://via.placeholder.com/80'}" style="width: 100%; height: 90px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 8px;" />
+          <h5 style="font-size: 0.85rem; font-weight: 700; line-clamp: 2;">${p.name}</h5>
+          <span style="font-size: 0.85rem; font-weight: 800; color: var(--primary-pink); margin-top: 4px;">${Utils.formatRupiah(p.base_price)}</span>
+        </div>
+      `).join("");
+    }
+
+    function addPosItem(productId) {
+      const p = posProducts.find(item => item.id === productId);
+      if (!p) return;
+
+      const isMie = p.categories?.slug === 'mie';
+      let level = null;
+      if (isMie) {
+        level = prompt(`Pilih Level Pedas untuk ${p.name} (1 - 8):`, "1");
+        if (!level) return;
+      }
+
+      const itemKey = `${p.id}_${level || '0'}`;
+      const existing = posCart.find(i => i.itemKey === itemKey);
+
+      if (existing) {
+        existing.qty++;
+        existing.subtotal = existing.qty * existing.price;
+      } else {
+        posCart.push({
+          itemKey,
+          productId: p.id,
+          name: p.name + (level ? ` (Level ${level})` : ''),
+          price: p.base_price,
+          qty: 1,
+          subtotal: p.base_price,
+          level
+        });
+      }
+
+      renderPosCart();
+    }
+
+    function renderPosCart() {
+      const container = document.getElementById("posCartItems");
+      if (posCart.length === 0) {
+        container.innerHTML = `<div style="color: #94a3b8; font-size: 0.85rem; text-align: center; margin-top: 40px;">Belum ada item dipilih</div>`;
+        updatePosTotals();
+        return;
+      }
+
+      container.innerHTML = posCart.map(item => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: var(--radius-sm);">
+          <div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: white;">${item.name}</div>
+            <div style="font-size: 0.75rem; color: #94a3b8;">${Utils.formatRupiah(item.price)}</div>
+          </div>
+          <div class="qty-ctrl" style="background: #1e293b;">
+            <button onclick="updatePosQty('${item.itemKey}', -1)" class="qty-btn" style="background: #334155; color: white;">−</button>
+            <span class="qty-val" style="color: white;">${item.qty}</span>
+            <button onclick="updatePosQty('${item.itemKey}', 1)" class="qty-btn" style="background: #334155; color: white;">+</button>
+          </div>
+        </div>
+      `).join("");
+
+      updatePosTotals();
+    }
+
+    function updatePosQty(itemKey, delta) {
+      const idx = posCart.findIndex(i => i.itemKey === itemKey);
+      if (idx >= 0) {
+        posCart[idx].qty += delta;
+        if (posCart[idx].qty <= 0) posCart.splice(idx, 1);
+        else posCart[idx].subtotal = posCart[idx].qty * posCart[idx].price;
+      }
+      renderPosCart();
+    }
+
+    function filterPosCat(slug) {
+      activePosCategory = slug;
+      renderPosProducts();
+    }
+
+    function onPosSearch(val) {
+      renderPosProducts(val);
+    }
+
+    function setPosOrderType(type) {
+      posOrderType = type;
+      document.getElementById("posBtnDineIn").className = type === 'DINE_IN' ? 'btn btn-primary' : 'btn btn-dark';
+      document.getElementById("posBtnTakeAway").className = type === 'TAKE_AWAY' ? 'btn btn-primary' : 'btn btn-dark';
+      document.getElementById("posTableSelect").style.display = type === 'DINE_IN' ? 'block' : 'none';
+    }
+
+    function setPosPaymentMethod(method) {
+      posPaymentMethod = method;
+      ['CASH', 'QRIS', 'DEBIT'].forEach(m => {
+        const b = document.getElementById(`payMethod-${m}`);
+        b.className = m === method ? 'btn btn-primary' : 'btn btn-dark';
+      });
+      document.getElementById("cashCalculator").style.display = method === 'CASH' ? 'flex' : 'none';
+    }
+
+    function updatePosTotals() {
+      const subtotal = posCart.reduce((sum, i) => sum + i.subtotal, 0);
+      const taxService = Math.round(subtotal * 0.15);
+      const grandTotal = subtotal + taxService;
+
+      document.getElementById("posSubtotal").innerText = Utils.formatRupiah(subtotal);
+      document.getElementById("posTaxService").innerText = Utils.formatRupiah(taxService);
+      document.getElementById("posGrandTotal").innerText = Utils.formatRupiah(grandTotal);
+
+      calculateCashChange();
+    }
+
+    function calculateCashChange() {
+      const subtotal = posCart.reduce((sum, i) => sum + i.subtotal, 0);
+      const grandTotal = subtotal + Math.round(subtotal * 0.15);
+      const received = parseFloat(document.getElementById("cashReceivedInput").value) || 0;
+      const change = Math.max(0, received - grandTotal);
+      document.getElementById("cashChangeVal").innerText = Utils.formatRupiah(change);
+    }
+
+    async function submitPosOrder() {
+      if (posCart.length === 0) {
+        Utils.showToast("Pilih minimal 1 item menu terlebih dahulu", "error");
+        return;
+      }
+
+      const tableId = document.getElementById("posTableSelect").value;
+      if (posOrderType === "DINE_IN" && !tableId) {
+        Utils.showToast("Pilih nomor meja Dine In!", "warning");
+        return;
+      }
+
+      const btn = document.getElementById("btnSubmitPos");
+      btn.disabled = true;
+      btn.innerText = "Memproses Transaksi...";
+
+      try {
+        const sb = getSupabase();
+        const subtotal = posCart.reduce((sum, i) => sum + i.subtotal, 0);
+        const tax = Math.round(subtotal * 0.10);
+        const service = Math.round(subtotal * 0.05);
+        const grandTotal = subtotal + tax + service;
+
+        const orderNumber = `ORD-POS-${Date.now()}`;
+
+        // Create Order
+        const { data: order, error } = await sb
+          .from("orders")
+          .insert({
+            order_number: orderNumber,
+            branch_id: window.APP_CONFIG.DEFAULT_BRANCH_ID,
+            table_id: posOrderType === "DINE_IN" ? tableId : null,
+            order_type: posOrderType,
+            subtotal,
+            discount_amount: 0,
+            tax_amount: tax,
+            service_charge: service,
+            grand_total: grandTotal,
+            payment_status: "PAID",
+            order_status: "CONFIRMED",
+            notes: "Manual Order Offline Kasir POS"
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        // Insert Order Items
+        const itemsData = posCart.map(i => ({
+          order_id: order.id,
+          product_id: i.productId,
+          product_name: i.name,
+          price_snapshot: i.price,
+          quantity: i.qty,
+          subtotal: i.subtotal
+        }));
+
+        await sb.from("order_items").insert(itemsData);
+
+        // Generate Queue Number & Deduct Stock
+        const { data: queueNum } = await sb.rpc("generate_queue_number", {
+          p_branch_id: window.APP_CONFIG.DEFAULT_BRANCH_ID,
+          p_order_id: order.id,
+          p_order_type: posOrderType
+        });
+
+        await sb.rpc("deduct_stock_on_order", { p_order_id: order.id });
+
+        // Record Payment
+        await sb.from("payments").insert({
+          order_id: order.id,
+          payment_method: posPaymentMethod,
+          amount: grandTotal,
+          status: "PAID",
+          paid_at: new Date().toISOString()
+        });
+
+        alert(`✅ Transaksi Berhasil!\n\nNomor Antrean: ${queueNum}\nTotal: ${Utils.formatRupiah(grandTotal)}\nMetode: ${posPaymentMethod}`);
+
+        posCart = [];
+        document.getElementById("cashReceivedInput").value = "";
+        renderPosCart();
+        btn.disabled = false;
+        btn.innerText = "🖨️ Cetak Antrean & Selesaikan Order";
+
+      } catch (err) {
+        Utils.showToast(err.message || "Gagal memproses transaksi kasir", "error");
+        btn.disabled = false;
+        btn.innerText = "🖨️ Cetak Antrean & Selesaikan Order";
+      }
+    }
+  </script>
+</body>
+</html>

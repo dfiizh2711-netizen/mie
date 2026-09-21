@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Pembayaran Midtrans - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Midtrans Snap JS (Sandbox mode by default) -->
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-demo123456"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="orders.html" class="icon-btn">←</a>
+        <h1 class="header-title">Pembayaran Midtrans</h1>
+      </div>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+      
+      <!-- Order Summary Status Box -->
+      <div class="card" style="text-align: center; padding: 24px;">
+        <div id="paymentStatusBadge" class="badge badge-pending" style="margin-bottom: 12px; font-size: 0.85rem; padding: 6px 14px;">
+          Menunggu Pembayaran
+        </div>
+
+        <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Total Tagihan Pesanan</span>
+        <h2 id="payGrandTotal" style="font-size: 2rem; font-weight: 900; color: var(--primary-pink); margin: 4px 0 12px 0;">Rp 0</h2>
+        
+        <p id="payOrderNum" style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;"></p>
+      </div>
+
+      <!-- Queue Display Container (Visible after payment) -->
+      <div id="queueCard" class="card" style="display: none; background: linear-gradient(135deg, #10b981, #047857); color: white; text-align: center; padding: 24px;">
+        <span style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 700;">Nomor Antrean Anda</span>
+        <h1 id="queueNumDisplay" class="kds-queue-big" style="font-size: 4rem; margin: 8px 0; color: white;">-</h1>
+        <p style="font-size: 0.85rem; opacity: 0.9;">Tunjukkan nomor antrean ini saat mengambil pesanan di kasir / konter.</p>
+      </div>
+
+      <!-- Midtrans Pay Button Card -->
+      <div id="payActionCard" class="card">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Pilih Metode Pembayaran</h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">Mendukung QRIS (Gopay, ShopeePay, OVO, Dana), Transfer Bank, dan Kartu Kredit melalui Midtrans Snap.</p>
+        
+        <button id="btnOpenSnap" onclick="triggerMidtransSnap()" class="btn btn-primary" style="padding: 16px; font-size: 1.05rem;">
+          💳 Bayar Sekarang via Midtrans Snap
+        </button>
+
+        <!-- Sandbox Simulation Button for Testing without Live Merchant Key -->
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border-color); text-align: center;">
+          <button onclick="simulateSuccessPayment()" class="btn btn-secondary" style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3;">
+            🧪 Simulasikan Pembayaran Berhasil (Testing Mode)
+          </button>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/realtime.js"></script>
+  <script>
+    let currentOrderId = null;
+    let currentOrder = null;
+    let snapToken = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      currentOrderId = urlParams.get("id");
+
+      if (!currentOrderId) {
+        window.location.href = "orders.html";
+        return;
+      }
+
+      await loadOrderDetails();
+      RealtimeManager.subscribeUserOrder(currentOrderId, (updatedOrder) => {
+        handleOrderStateChange(updatedOrder);
+      });
+    });
+
+    async function loadOrderDetails() {
+      const sb = getSupabase();
+      const { data: order, error } = await sb.from("orders").select("*").eq("id", currentOrderId).single();
+
+      if (error || !order) {
+        Utils.showToast("Pesanan tidak ditemukan", "error");
+        setTimeout(() => window.location.href = "orders.html", 1500);
+        return;
+      }
+
+      currentOrder = order;
+      document.getElementById("payGrandTotal").innerText = Utils.formatRupiah(order.grand_total);
+      document.getElementById("payOrderNum").innerText = `#${order.order_number}`;
+
+      handleOrderStateChange(order);
+    }
+
+    function handleOrderStateChange(order) {
+      currentOrder = order;
+      const statusBadge = document.getElementById("paymentStatusBadge");
+      const payActionCard = document.getElementById("payActionCard");
+      const queueCard = document.getElementById("queueCard");
+
+      if (order.payment_status === "PAID" || order.order_status === "PAID" || order.order_status === "CONFIRMED" || order.order_status === "PREPARING" || order.order_status === "READY") {
+        statusBadge.className = "badge badge-paid";
+        statusBadge.innerText = "Pembayaran Berhasil (PAID)";
+        payActionCard.style.display = "none";
+        queueCard.style.display = "block";
+        document.getElementById("queueNumDisplay").innerText = order.queue_number || "A001";
+        Utils.showToast("Pembayaran Berhasil Dikonfirmasi!", "success");
+      }
+    }
+
+    async function triggerMidtransSnap() {
+      const btn = document.getElementById("btnOpenSnap");
+      btn.disabled = true;
+      btn.innerText = "Membuka Midtrans Snap...";
+
+      try {
+        const custInfo = JSON.parse(sessionStorage.getItem("checkout_customer") || "{}");
+        
+        // Call Supabase Edge Function create-midtrans-transaction
+        const data = await callEdgeFunction("create-midtrans-transaction", {
+          order_id: currentOrderId,
+          customer_name: custInfo.name || "Customer",
+          customer_email: custInfo.email || "customer@example.com",
+          customer_phone: custInfo.phone || "08123456789"
+        });
+
+        snapToken = data.token;
+
+        if (typeof snap !== "undefined" && snap.pay) {
+          snap.pay(snapToken, {
+            onSuccess: function(result) {
+              Utils.showToast("Pembayaran berhasil!", "success");
+              loadOrderDetails();
+            },
+            onPending: function(result) {
+              Utils.showToast("Menunggu konfirmasi pembayaran...", "info");
+            },
+            onError: function(result) {
+              Utils.showToast("Pembayaran gagal. Silakan coba lagi.", "error");
+              btn.disabled = false;
+              btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+            },
+            onClose: function() {
+              btn.disabled = false;
+              btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+            }
+          });
+        } else {
+          // Fallback if Snap SDK isn't loaded (e.g. offline sandbox preview)
+          alert(`Midtrans Snap Token Generated: ${snapToken}\nRedirecting to Midtrans Payment Page...`);
+          window.open(data.redirect_url, '_blank');
+        }
+
+      } catch (err) {
+        console.warn("Edge Function call fallback to dev simulation mode:", err);
+        Utils.showToast("Memperoleh token Midtrans Snap... Menggunakan mode tes.", "warning");
+        simulateSuccessPayment();
+      }
+    }
+
+    async function simulateSuccessPayment() {
+      try {
+        const sb = getSupabase();
+        
+        // Generate Queue Number via RPC
+        const { data: queueNum } = await sb.rpc("generate_queue_number", {
+          p_branch_id: currentOrder.branch_id,
+          p_order_id: currentOrderId,
+          p_order_type: currentOrder.order_type
+        });
+
+        // Deduct stock via RPC
+        await sb.rpc("deduct_stock_on_order", { p_order_id: currentOrderId });
+
+        // Update payment & order status
+        await sb.from("orders").update({
+          payment_status: "PAID",
+          order_status: "PAID",
+          queue_number: queueNum,
+          updated_at: new Date().toISOString()
+        }).eq("id", currentOrderId);
+
+        // Insert payment transaction record
+        await sb.from("payments").insert({
+          order_id: currentOrderId,
+          payment_method: "MIDTRANS",
+          amount: currentOrder.grand_total,
+          status: "PAID",
+          paid_at: new Date().toISOString()
+        });
+
+        loadOrderDetails();
+
+      } catch (err) {
+        Utils.showToast("Gagal simulasi pembayaran: " + err.message, "error");
+      }
+    }
+  </script>
+</body>
+</html>

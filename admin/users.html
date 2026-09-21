@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Pengguna & Staff - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Manajemen Pengguna & Staff Restoran</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="users.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.25rem; font-weight: 800;">👥 Daftar Akun Pengguna & Hak Akses Staff</h2>
+    </div>
+
+    <!-- Data Table -->
+    <div class="card card-dark">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nama Lengkap</th>
+              <th>Email</th>
+              <th>Telepon</th>
+              <th>Hak Akses (Role)</th>
+              <th>Terdaftar</th>
+              <th>Ubah Role Staff</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadUsers();
+    });
+
+    async function loadUsers() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("usersTableBody");
+      const { data: list } = await sb.from("profiles").select("*").order("created_at", { ascending: false });
+
+      if (!list) return;
+
+      tbody.innerHTML = list.map(u => `
+        <tr>
+          <td style="font-weight: 700; color: white;">${u.full_name}</td>
+          <td>${u.email || '-'}</td>
+          <td style="font-family: monospace;">${u.phone || '-'}</td>
+          <td><span class="badge ${getRoleBadgeClass(u.role)}">${u.role}</span></td>
+          <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(u.created_at)}</td>
+          <td>
+            <select onchange="updateUserRole('${u.id}', this.value)" class="card card-dark" style="padding: 4px 8px; font-size: 0.8rem;">
+              <option value="USER" ${u.role === 'USER' ? 'selected' : ''}>USER (Pelanggan)</option>
+              <option value="KASIR" ${u.role === 'KASIR' ? 'selected' : ''}>KASIR (POS Staff)</option>
+              <option value="DAPUR" ${u.role === 'DAPUR' ? 'selected' : ''}>DAPUR (Kitchen Staff)</option>
+              <option value="ADMIN" ${u.role === 'ADMIN' ? 'selected' : ''}>ADMIN (Manager)</option>
+            </select>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function getRoleBadgeClass(role) {
+      if (role === 'ADMIN') return 'badge-cancelled';
+      if (role === 'KASIR') return 'badge-preparing';
+      if (role === 'DAPUR') return 'badge-ready';
+      return 'badge-dinein';
+    }
+
+    async function updateUserRole(userId, newRole) {
+      const sb = getSupabase();
+      await sb.from("profiles").update({ role: newRole }).eq("id", userId);
+
+      // Log Audit
+      const currentUser = await getCurrentUserProfile();
+      await sb.from("audit_logs").insert({
+        actor_id: currentUser?.id,
+        action: "UPDATE_USER_ROLE",
+        entity_type: "PROFILES",
+        entity_id: userId,
+        new_data: { role: newRole }
+      });
+
+      Utils.showToast(`Role pengguna diperbarui ke ${newRole}`, "success");
+      loadUsers();
+    }
+  </script>
+</body>
+</html>

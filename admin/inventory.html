@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Stok Inventory - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Manajemen Stok & Mutasi Inventory</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.25rem; font-weight: 800;">📦 Ringkasan Stok Produk Restoran</h2>
+      <button onclick="openStockModal()" class="btn btn-primary" style="width: auto; padding: 10px 18px; font-size: 0.85rem;">
+        ➕ Input Mutasi Stok (Stock In / Waste)
+      </button>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="card card-dark">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nama Produk</th>
+              <th>Stok Saat Ini</th>
+              <th>Min. Stok</th>
+              <th>Satuan</th>
+              <th>Status Stok</th>
+              <th>Terakhir Diupdate</th>
+              <th>Aksi Quick Adjust</th>
+            </tr>
+          </thead>
+          <tbody id="invTableBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Stock Adjustment Modal -->
+  <div id="stockModal" class="modal-backdrop" onclick="closeStockModal()">
+    <div class="modal-sheet" style="background: #1e293b; color: white;" onclick="event.stopPropagation()">
+      <div class="modal-drag-handle"></div>
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Input Mutasi / Adjustment Stok</h3>
+
+      <form id="stockForm" style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Pilih Produk *</label>
+          <select id="stkProduct" required class="card card-dark" style="width: 100%; padding: 10px;"></select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jenis Mutasi *</label>
+          <select id="stkType" required class="card card-dark" style="width: 100%; padding: 10px;">
+            <option value="STOCK_IN">➕ STOCK_IN (Tambah Stok Masuk)</option>
+            <option value="WASTE">🗑️ WASTE (Bahan Rusak / Kadaluarsa)</option>
+            <option value="ADJUSTMENT">🔧 ADJUSTMENT (Koreksi Opname)</option>
+            <option value="RETURN">↩️ RETURN (Retur Suplier)</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jumlah / Qty *</label>
+          <input type="number" id="stkQty" required min="1" value="10" class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Catatan Keterangan</label>
+          <input type="text" id="stkNotes" placeholder="Cth: Pengiriman suplier, kemasan bocor..." class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Simpan Transaksi Stok</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let inventoryList = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadInventory();
+    });
+
+    async function loadInventory() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("invTableBody");
+      const { data } = await sb.from("inventory").select("*, products(name)").order("updated_at", { ascending: false });
+
+      inventoryList = data || [];
+
+      // Populate Select Modal
+      const select = document.getElementById("stkProduct");
+      select.innerHTML = '<option value="">-- Pilih Produk --</option>' + inventoryList.map(i => `
+        <option value="${i.id}">${i.products?.name || 'Produk'} (Stok: ${i.current_stock})</option>
+      `).join("");
+
+      if (inventoryList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">Belum ada data stok</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = inventoryList.map(i => {
+        const isLow = i.current_stock <= i.min_stock;
+        return `
+          <tr>
+            <td style="font-weight: 700; color: white;">${i.products?.name || '-'}</td>
+            <td style="font-weight: 900; font-size: 1.1rem; color: ${isLow ? 'var(--accent-orange)' : 'var(--accent-green)'};">${i.current_stock}</td>
+            <td>${i.min_stock}</td>
+            <td>${i.unit}</td>
+            <td><span class="badge ${isLow ? 'badge-cancelled' : 'badge-paid'}">${isLow ? 'Stok Menipis' : 'Aman'}</span></td>
+            <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(i.updated_at)}</td>
+            <td>
+              <button onclick="quickAddStock('${i.id}', 20)" class="btn btn-secondary" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">+20 Stok</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function openStockModal() {
+      Utils.openModal("stockModal");
+    }
+
+    function closeStockModal() {
+      Utils.closeModal("stockModal");
+    }
+
+    document.getElementById("stockForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const sb = getSupabase();
+      const inventory_id = document.getElementById("stkProduct").value;
+      const type = document.getElementById("stkType").value;
+      const qty = parseInt(document.getElementById("stkQty").value);
+      const notes = document.getElementById("stkNotes").value.trim();
+
+      const inv = inventoryList.find(i => i.id === inventory_id);
+      if (!inv) return;
+
+      let delta = qty;
+      if (type === 'WASTE' || type === 'RETURN') delta = -qty;
+
+      const newStock = Math.max(0, inv.current_stock + delta);
+
+      // Update Inventory
+      await sb.from("inventory").update({ current_stock: newStock, updated_at: new Date().toISOString() }).eq("id", inventory_id);
+
+      // Insert Transaction Log
+      await sb.from("inventory_transactions").insert({
+        inventory_id,
+        type,
+        quantity: delta,
+        notes: notes || null
+      });
+
+      Utils.showToast("Mutasi stok berhasil disimpan", "success");
+      closeStockModal();
+      loadInventory();
+    });
+
+    async function quickAddStock(invId, delta) {
+      const sb = getSupabase();
+      const inv = inventoryList.find(i => i.id === invId);
+      if (!inv) return;
+
+      const newStock = inv.current_stock + delta;
+      await sb.from("inventory").update({ current_stock: newStock, updated_at: new Date().toISOString() }).eq("id", invId);
+      await sb.from("inventory_transactions").insert({ inventory_id: invId, type: "STOCK_IN", quantity: delta, notes: "Quick Add Stock" });
+
+      Utils.showToast(`Stok ditambahkan +${delta}`, "success");
+      loadInventory();
+    }
+  </script>
+</body>
+</html>

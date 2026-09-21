@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Reservasi - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Manajemen Reservasi Meja</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="reservations.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📅 Reservasi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div class="card card-dark">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">📅 Master Data Reservasi Meja Global</h3>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No. Meja</th>
+              <th>Tanggal & Jam</th>
+              <th>Nama Pemesan</th>
+              <th>No. Telepon</th>
+              <th>Tamu</th>
+              <th>Status</th>
+              <th>Waktu Booking</th>
+            </tr>
+          </thead>
+          <tbody id="admResTable">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadAdminReservations();
+    });
+
+    async function loadAdminReservations() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("admResTable");
+
+      const { data: list } = await sb.from("reservations").select("*, tables(table_number)").order("reservation_date", { ascending: false });
+
+      if (!list) return;
+
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td style="font-weight: 800; color: var(--primary-pink);">${r.tables?.table_number || '-'}</td>
+          <td>${r.reservation_date} • ${r.reservation_time}</td>
+          <td style="font-weight: 700; color: white;">${r.customer_name}</td>
+          <td style="font-family: monospace;">${r.customer_phone}</td>
+          <td>${r.guest_count} Orang</td>
+          <td><span class="badge ${r.status === 'CONFIRMED' ? 'badge-paid' : 'badge-pending'}">${r.status}</span></td>
+          <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(r.created_at)}</td>
+        </tr>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

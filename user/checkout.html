@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Checkout Pesanan - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="cart.html" class="icon-btn">←</a>
+        <h1 class="header-title">Konfirmasi Checkout</h1>
+      </div>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 110px;">
+      
+      <!-- Customer Information Form -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">👤 Informasi Pemesan</h4>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nama Pemesan *</label>
+            <input type="text" id="custName" required placeholder="Contoh: Budi Santoso" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nomor Telepon (WhatsApp) *</label>
+            <input type="tel" id="custPhone" required placeholder="081234567890" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Email (Struk Elektronik)</label>
+            <input type="email" id="custEmail" placeholder="nama@email.com" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Dine In / Take Away Summary Card -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">📌 Tipe & Lokasi</h4>
+        <div id="checkoutOrderTypeInfo" style="font-size: 0.85rem; color: var(--text-secondary);">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Items List Summary Card -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">🍽️ Pesanan Saya</h4>
+        <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 8px;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Grand Total Summary Card -->
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 0.8rem; color: #94a3b8; display: block;">Total Tagihan Akhir</span>
+            <strong id="checkoutGrandTotal" style="font-size: 1.2rem; color: var(--primary-pink);">Rp 0</strong>
+          </div>
+          <span style="font-size: 0.75rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; color: #cbd5e1;">Sudah Pajak & Service</span>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Submit Button -->
+    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); padding: 12px 16px; z-index: 80;">
+      <button onclick="processCheckout()" id="btnProcessCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1rem;">
+        💳 Lanjut ke Pembayaran Midtrans →
+      </button>
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    let currentUserProfile = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      const cart = CartStore.getCart();
+      if (cart.items.length === 0) {
+        window.location.href = "cart.html";
+        return;
+      }
+
+      await autofillUser();
+      renderCheckoutSummary();
+    });
+
+    async function autofillUser() {
+      currentUserProfile = await getCurrentUserProfile();
+      if (currentUserProfile) {
+        document.getElementById("custName").value = currentUserProfile.full_name || '';
+        document.getElementById("custPhone").value = currentUserProfile.phone || '';
+        document.getElementById("custEmail").value = currentUserProfile.email || '';
+      }
+    }
+
+    function renderCheckoutSummary() {
+      const cart = CartStore.getCart();
+      const totals = CartStore.getTotals();
+
+      const typeInfo = document.getElementById("checkoutOrderTypeInfo");
+      if (cart.order_type === "DINE_IN") {
+        typeInfo.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <span class="badge badge-dinein">DINE IN</span>
+              <strong style="margin-left: 8px; font-size: 0.95rem;">${cart.table_number || 'Belum Pilih Meja'}</strong>
+            </div>
+            <a href="home.html" style="font-size: 0.8rem; color: var(--primary-pink); font-weight: 600;">Ubah Meja</a>
+          </div>
+        `;
+      } else {
+        typeInfo.innerHTML = `
+          <div>
+            <span class="badge badge-takeaway">TAKE AWAY</span>
+            <span style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 8px;">Pesanan Dibungkus</span>
+          </div>
+        `;
+      }
+
+      const itemsList = document.getElementById("checkoutItemsList");
+      itemsList.innerHTML = cart.items.map(item => `
+        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+          <div>
+            <strong>${item.quantity}x</strong> ${item.product_name}
+            ${item.notes ? `<div style="font-size: 0.75rem; color: var(--text-secondary); font-style: italic;">Note: ${item.notes}</div>` : ''}
+          </div>
+          <span style="font-weight: 700;">${Utils.formatRupiah(item.subtotal)}</span>
+        </div>
+      `).join("");
+
+      document.getElementById("checkoutGrandTotal").innerText = Utils.formatRupiah(totals.grandTotal);
+    }
+
+    async function processCheckout() {
+      const name = document.getElementById("custName").value.trim();
+      const phone = document.getElementById("custPhone").value.trim();
+      const email = document.getElementById("custEmail").value.trim();
+
+      if (!name || !phone) {
+        Utils.showToast("Silakan lengkapi nama dan nomor telepon WhatsApp Anda", "error");
+        return;
+      }
+
+      const cart = CartStore.getCart();
+      if (cart.order_type === "DINE_IN" && !cart.table_id) {
+        Utils.showToast("Silakan pilih nomor meja Dine In terlebih dahulu di beranda", "warning");
+        setTimeout(() => window.location.href = "home.html", 1200);
+        return;
+      }
+
+      const btn = document.getElementById("btnProcessCheckout");
+      btn.disabled = true;
+      btn.innerText = "Membuat Pesanan...";
+
+      try {
+        const sb = getSupabase();
+        const totals = CartStore.getTotals();
+        const orderNumber = `ORD-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        // Insert Order to Database
+        const { data: order, error: orderErr } = await sb
+          .from("orders")
+          .insert({
+            order_number: orderNumber,
+            user_id: currentUserProfile?.id || null,
+            branch_id: window.APP_CONFIG.DEFAULT_BRANCH_ID,
+            table_id: cart.table_id || null,
+            order_type: cart.order_type,
+            subtotal: totals.subtotal,
+            discount_amount: totals.discount,
+            tax_amount: totals.tax,
+            service_charge: totals.service,
+            grand_total: totals.grandTotal,
+            payment_status: "UNPAID",
+            order_status: "PENDING_PAYMENT",
+            notes: `Pemesan: ${name} (${phone})`
+          })
+          .select()
+          .single();
+
+        if (orderErr) throw orderErr;
+
+        // Insert Order Items
+        const orderItemsData = cart.items.map(i => ({
+          order_id: order.id,
+          product_id: i.product_id,
+          product_name: i.product_name,
+          price_snapshot: i.price_snapshot,
+          quantity: i.quantity,
+          subtotal: i.subtotal,
+          notes: i.notes || null
+        }));
+
+        const { error: itemsErr } = await sb.from("order_items").insert(orderItemsData);
+        if (itemsErr) throw itemsErr;
+
+        // Save Customer Info in localStorage for Payment Step
+        sessionStorage.setItem("checkout_customer", JSON.stringify({ name, phone, email }));
+
+        // Clear cart
+        CartStore.clearCart();
+
+        Utils.showToast("Pesanan Berhasil Dibuat!", "success");
+        setTimeout(() => {
+          window.location.href = `payment.html?id=${order.id}`;
+        }, 600);
+
+      } catch (err) {
+        Utils.showToast(err.message || "Gagal membuat pesanan", "error");
+        btn.disabled = false;
+        btn.innerText = "💳 Lanjut ke Pembayaran Midtrans →";
+      }
+    }
+  </script>
+</body>
+</html>

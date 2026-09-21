@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kasir POS - Kelola Pesanan - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge">POS</span>
+      <span>Kelola Transaksi Pesanan</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="orders.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📜 Kelola Pesanan</a>
+    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📅 Kelola Reservasi</a>
+    <a href="manual-order.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛍️ Kasir Manual</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <!-- Filter Tabs & Search Bar -->
+    <div class="card card-dark" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <div style="display: flex; gap: 8px; overflow-x: auto;">
+        <button onclick="filterStatus('ALL')" id="st-ALL" class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">Semua Status</button>
+        <button onclick="filterStatus('PAID')" id="st-PAID" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">PAID (Dibayar)</button>
+        <button onclick="filterStatus('CONFIRMED')" id="st-CONFIRMED" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">CONFIRMED (Dapur)</button>
+        <button onclick="filterStatus('PREPARING')" id="st-PREPARING" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">PREPARING (Dimasak)</button>
+        <button onclick="filterStatus('READY')" id="st-READY" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">READY (Siap Saji)</button>
+        <button onclick="filterStatus('COMPLETED')" id="st-COMPLETED" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">COMPLETED</button>
+      </div>
+
+      <input type="text" id="orderSearch" oninput="onSearchOrder(this.value)" placeholder="🔍 Cari no order / antrean..." class="card card-dark" style="width: 250px; padding: 8px 12px; font-size: 0.85rem;" />
+    </div>
+
+    <!-- Orders Data Table -->
+    <div class="card card-dark">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Antrean</th>
+              <th>No. Order</th>
+              <th>Tipe</th>
+              <th>Meja</th>
+              <th>Status Bayar</th>
+              <th>Status Pesanan</th>
+              <th>Grand Total</th>
+              <th>Waktu</th>
+              <th>Aksi Update Status</th>
+            </tr>
+          </thead>
+          <tbody id="ordersTableBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/realtime.js"></script>
+  <script>
+    let allOrders = [];
+    let currentFilter = 'ALL';
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["KASIR", "ADMIN"]);
+      await loadOrders();
+
+      RealtimeManager.subscribeCashierOrders(() => loadOrders(), () => loadOrders());
+    });
+
+    async function loadOrders() {
+      const sb = getSupabase();
+      const { data } = await sb
+        .from("orders")
+        .select("*, tables(table_number)")
+        .order("created_at", { ascending: false });
+
+      allOrders = data || [];
+      renderOrders();
+    }
+
+    function renderOrders(search = "") {
+      const tbody = document.getElementById("ordersTableBody");
+      let filtered = allOrders;
+
+      if (currentFilter !== 'ALL') {
+        filtered = filtered.filter(o => o.order_status === currentFilter || o.payment_status === currentFilter);
+      }
+
+      if (search.trim() !== "") {
+        const q = search.toLowerCase();
+        filtered = filtered.filter(o => o.order_number.toLowerCase().includes(q) || (o.queue_number && o.queue_number.toLowerCase().includes(q)));
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: #94a3b8; padding: 24px;">Tidak ada data pesanan</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(o => {
+        const badgeInfo = Utils.getOrderStatusBadge(o.order_status);
+        return `
+          <tr>
+            <td style="font-weight: 900; font-size: 1.1rem; color: var(--primary-pink);">${o.queue_number || '-'}</td>
+            <td style="font-family: monospace;"><a href="order-detail.html?id=${o.id}" style="color: #60a5fa; text-decoration: underline;">#${o.order_number}</a></td>
+            <td>${Utils.getOrderTypeBadge(o.order_type)}</td>
+            <td>${o.tables?.table_number || '-'}</td>
+            <td><span class="badge ${o.payment_status === 'PAID' ? 'badge-paid' : 'badge-pending'}">${o.payment_status}</span></td>
+            <td><span class="badge ${badgeInfo.class}">${badgeInfo.label}</span></td>
+            <td style="font-weight: 700;">${Utils.formatRupiah(o.grand_total)}</td>
+            <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(o.created_at)}</td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                ${o.order_status === 'PAID' ? `<button onclick="updateOrderStatus('${o.id}', 'CONFIRMED')" class="btn btn-primary" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Konfirmasi</button>` : ''}
+                ${o.order_status === 'READY' ? `<button onclick="updateOrderStatus('${o.id}', 'COMPLETED')" class="btn btn-success" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Selesaikan</button>` : ''}
+                ${o.order_status !== 'COMPLETED' && o.order_status !== 'CANCELLED' ? `<button onclick="updateOrderStatus('${o.id}', 'CANCELLED')" class="btn btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Batal</button>` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function filterStatus(status) {
+      currentFilter = status;
+      document.querySelectorAll("[id^='st-']").forEach(b => b.className = "btn btn-dark");
+      document.getElementById(`st-${status}`).className = "btn btn-primary";
+      renderOrders();
+    }
+
+    function onSearchOrder(val) {
+      renderOrders(val);
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      const sb = getSupabase();
+      await sb.from("orders").update({ order_status: newStatus }).eq("id", orderId);
+      Utils.showToast(`Status order diubah menjadi ${newStatus}`, "success");
+      loadOrders();
+    }
+  </script>
+</body>
+</html>

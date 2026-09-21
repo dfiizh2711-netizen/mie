@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Kelola Produk - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
+      <span>Kelola Produk Menu</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="products.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h2 style="font-size: 1.25rem; font-weight: 800;">🍜 Master Data Produk Menu</h2>
+      <button onclick="openAddProductModal()" class="btn btn-primary" style="width: auto; padding: 10px 18px; font-size: 0.85rem;">
+        ➕ Tambah Produk Baru
+      </button>
+    </div>
+
+    <!-- Products Data Table -->
+    <div class="card card-dark">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Gambar</th>
+              <th>Nama Produk</th>
+              <th>Kategori</th>
+              <th>Harga Dasar</th>
+              <th>Status Aktif</th>
+              <th>Ketersediaan</th>
+              <th>Aksi Admin</th>
+            </tr>
+          </thead>
+          <tbody id="adminProductsBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Add / Edit Product Modal -->
+  <div id="prodModal" class="modal-backdrop" onclick="closeProdModal()">
+    <div class="modal-sheet" style="background: #1e293b; color: white;" onclick="event.stopPropagation()">
+      <div class="modal-drag-handle"></div>
+      <h3 id="prodModalTitle" style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">Tambah Produk Baru</h3>
+
+      <form id="prodForm" style="display: flex; flex-direction: column; gap: 12px;">
+        <input type="hidden" id="prodId" />
+        
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nama Produk *</label>
+          <input type="text" id="prodName" required placeholder="Contoh: Mie Gacoan" class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Kategori *</label>
+          <select id="prodCategory" required class="card card-dark" style="width: 100%; padding: 10px;">
+            <option value="">-- Pilih Kategori --</option>
+          </select>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Harga Dasar (Rp) *</label>
+          <input type="number" id="prodPrice" required min="0" placeholder="10000" class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">URL Gambar Produk</label>
+          <input type="url" id="prodImageUrl" placeholder="https://images.unsplash.com/..." class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Deskripsi Singkat</label>
+          <input type="text" id="prodDesc" placeholder="Deskripsi rasa dan bahan..." class="card card-dark" style="width: 100%; padding: 10px;" />
+        </div>
+
+        <div style="display: flex; gap: 16px; margin-top: 4px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+            <input type="checkbox" id="prodIsActive" checked /> Status Aktif Menu
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.85rem;">
+            <input type="checkbox" id="prodIsAvailable" checked /> Ketersediaan (Ready)
+          </label>
+        </div>
+
+        <button type="submit" id="btnSaveProd" class="btn btn-primary" style="margin-top: 10px;">
+          Simpan Produk
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    let adminCategories = [];
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["ADMIN"]);
+      await loadCategories();
+      await loadProducts();
+    });
+
+    async function loadCategories() {
+      const sb = getSupabase();
+      const { data } = await sb.from("categories").select("*").order("display_order");
+      adminCategories = data || [];
+
+      const select = document.getElementById("prodCategory");
+      select.innerHTML = '<option value="">-- Pilih Kategori --</option>' + adminCategories.map(c => `
+        <option value="${c.id}">${c.name}</option>
+      `).join("");
+    }
+
+    async function loadProducts() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("adminProductsBody");
+      const { data: products } = await sb.from("products").select("*, categories(name)").order("created_at", { ascending: false });
+
+      if (!products || products.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #94a3b8;">Belum ada produk</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = products.map(p => `
+        <tr>
+          <td><img src="${p.image_url || 'https://via.placeholder.com/40'}" style="width: 45px; height: 45px; object-fit: cover; border-radius: var(--radius-sm);" /></td>
+          <td style="font-weight: 700; color: white;">${p.name}</td>
+          <td><span class="badge badge-dinein">${p.categories?.name || '-'}</span></td>
+          <td style="font-weight: 800; color: var(--primary-pink);">${Utils.formatRupiah(p.base_price)}</td>
+          <td><span class="badge ${p.is_active ? 'badge-paid' : 'badge-cancelled'}">${p.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+          <td>
+            <button onclick="toggleAvailability('${p.id}', ${!p.is_available})" class="btn" style="padding: 4px 8px; font-size: 0.75rem; background: ${p.is_available ? '#10b981' : '#ef4444'}; color: white; width: auto;">
+              ${p.is_available ? 'Ready' : 'Habis'}
+            </button>
+          </td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button onclick="openEditProductModal('${p.id}')" class="btn btn-secondary" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Edit</button>
+              <button onclick="toggleProductActive('${p.id}', ${!p.is_active})" class="btn btn-dark" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">${p.is_active ? 'Nonaktifkan' : 'Aktifkan'}</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function openAddProductModal() {
+      document.getElementById("prodModalTitle").innerText = "Tambah Produk Baru";
+      document.getElementById("prodId").value = "";
+      document.getElementById("prodName").value = "";
+      document.getElementById("prodCategory").value = "";
+      document.getElementById("prodPrice").value = "";
+      document.getElementById("prodImageUrl").value = "";
+      document.getElementById("prodDesc").value = "";
+      document.getElementById("prodIsActive").checked = true;
+      document.getElementById("prodIsAvailable").checked = true;
+
+      Utils.openModal("prodModal");
+    }
+
+    async function openEditProductModal(id) {
+      const sb = getSupabase();
+      const { data: p } = await sb.from("products").select("*").eq("id", id).single();
+      if (!p) return;
+
+      document.getElementById("prodModalTitle").innerText = "Edit Produk Menu";
+      document.getElementById("prodId").value = p.id;
+      document.getElementById("prodName").value = p.name;
+      document.getElementById("prodCategory").value = p.category_id;
+      document.getElementById("prodPrice").value = p.base_price;
+      document.getElementById("prodImageUrl").value = p.image_url || "";
+      document.getElementById("prodDesc").value = p.description || "";
+      document.getElementById("prodIsActive").checked = p.is_active;
+      document.getElementById("prodIsAvailable").checked = p.is_available;
+
+      Utils.openModal("prodModal");
+    }
+
+    function closeProdModal() {
+      Utils.closeModal("prodModal");
+    }
+
+    document.getElementById("prodForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const sb = getSupabase();
+
+      const id = document.getElementById("prodId").value;
+      const name = document.getElementById("prodName").value.trim();
+      const category_id = document.getElementById("prodCategory").value;
+      const base_price = parseFloat(document.getElementById("prodPrice").value);
+      const image_url = document.getElementById("prodImageUrl").value.trim();
+      const description = document.getElementById("prodDesc").value.trim();
+      const is_active = document.getElementById("prodIsActive").checked;
+      const is_available = document.getElementById("prodIsAvailable").checked;
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+      const payload = { category_id, name, slug, description, image_url, base_price, is_active, is_available };
+
+      if (id) {
+        await sb.from("products").update(payload).eq("id", id);
+        Utils.showToast("Produk berhasil diperbarui", "success");
+      } else {
+        await sb.from("products").insert(payload);
+        Utils.showToast("Produk baru berhasil ditambahkan", "success");
+      }
+
+      closeProdModal();
+      loadProducts();
+    });
+
+    async function toggleAvailability(id, nextVal) {
+      const sb = getSupabase();
+      await sb.from("products").update({ is_available: nextVal }).eq("id", id);
+      Utils.showToast("Ketersediaan produk diperbarui", "success");
+      loadProducts();
+    }
+
+    async function toggleProductActive(id, nextVal) {
+      const sb = getSupabase();
+      await sb.from("products").update({ is_active: nextVal }).eq("id", id);
+      Utils.showToast("Status produk diperbarui", "success");
+      loadProducts();
+    }
+  </script>
+</body>
+</html>

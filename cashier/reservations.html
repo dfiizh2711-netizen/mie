@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kasir POS - Kelola Reservasi - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge">POS</span>
+      <span>Kelola Reservasi Meja</span>
+    </div>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Kelola Pesanan</a>
+    <a href="reservations.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📅 Kelola Reservasi</a>
+    <a href="manual-order.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛍️ Kasir Manual</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div class="card card-dark">
+      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">📅 Daftar Buku Reservasi Meja</h3>
+      
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No. Meja</th>
+              <th>Tanggal & Jam</th>
+              <th>Nama Pemesan</th>
+              <th>No. Telepon</th>
+              <th>Jml Tamu</th>
+              <th>Catatan</th>
+              <th>Status</th>
+              <th>Aksi Kasir</th>
+            </tr>
+          </thead>
+          <tbody id="resTableBody">
+            <!-- JS Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await AuthModule.requireRole(["KASIR", "ADMIN"]);
+      await loadReservations();
+    });
+
+    async function loadReservations() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("resTableBody");
+
+      const { data: list } = await sb
+        .from("reservations")
+        .select("*, tables(table_number)")
+        .order("reservation_date", { ascending: false });
+
+      if (!list || list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 24px;">Belum ada data reservasi</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => `
+        <tr>
+          <td style="font-weight: 800; color: var(--primary-pink);">${r.tables?.table_number || '-'}</td>
+          <td style="font-weight: 600;">${r.reservation_date} • ${r.reservation_time}</td>
+          <td>${r.customer_name}</td>
+          <td style="font-family: monospace;">${r.customer_phone}</td>
+          <td>${r.guest_count} Orang</td>
+          <td style="font-size: 0.8rem; color: #94a3b8;">${r.notes || '-'}</td>
+          <td><span class="badge ${r.status === 'CONFIRMED' ? 'badge-paid' : (r.status === 'CANCELLED' ? 'badge-cancelled' : 'badge-pending')}">${r.status}</span></td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              ${r.status === 'PENDING' ? `<button onclick="updateResStatus('${r.id}', 'CONFIRMED')" class="btn btn-primary" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Konfirmasi</button>` : ''}
+              ${r.status === 'CONFIRMED' ? `<button onclick="updateResStatus('${r.id}', 'ARRIVED')" class="btn btn-success" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Tamu Tiba</button>` : ''}
+              ${r.status === 'ARRIVED' ? `<button onclick="updateResStatus('${r.id}', 'COMPLETED')" class="btn btn-dark" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Selesai</button>` : ''}
+              ${r.status !== 'COMPLETED' && r.status !== 'CANCELLED' ? `<button onclick="updateResStatus('${r.id}', 'CANCELLED')" class="btn btn-danger" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Batal</button>` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function updateResStatus(resId, status) {
+      const sb = getSupabase();
+      await sb.from("reservations").update({ status }).eq("id", resId);
+      Utils.showToast(`Status reservasi diubah ke ${status}`, "success");
+      loadReservations();
+    }
+  </script>
+</body>
+</html>

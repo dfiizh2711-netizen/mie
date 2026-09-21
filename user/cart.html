@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Keranjang Pesanan - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="menu.html" class="icon-btn">←</a>
+        <h1 class="header-title">Keranjang Saya</h1>
+      </div>
+      <button onclick="clearCartConfirm()" class="icon-btn" title="Kosongkan Keranjang" style="color: var(--accent-red);">🗑️</button>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 120px;">
+      
+      <!-- Cart Items List Container -->
+      <div id="cartItemsList" style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- JS Rendered Items -->
+      </div>
+
+      <!-- Promo Code Voucher Section -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 8px;">🎟️ Kode Promo & Voucher</h4>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" id="promoInput" placeholder="Masukkan kode (cth: GACOAN10)" class="card" style="flex: 1; padding: 10px 14px; text-transform: uppercase; font-size: 0.85rem;" />
+          <button onclick="applyPromoCode()" class="btn btn-primary" style="width: auto; padding: 10px 16px; font-size: 0.85rem;">Pakai</button>
+        </div>
+        <div id="activePromoBadge" style="margin-top: 8px;"></div>
+      </div>
+
+      <!-- Payment Summary Calculation Card -->
+      <div class="card">
+        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">Rincian Pembayaran</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+          <div style="display: flex; justify-content: space-between;">
+            <span>Subtotal Menu</span>
+            <span id="subtotalVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; color: var(--accent-green);">
+            <span>Diskon Promo</span>
+            <span id="discountVal" style="font-weight: 600;">-Rp 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Pajak Restoran PB1 (10%)</span>
+            <span id="taxVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Service Charge (5%)</span>
+            <span id="serviceVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+          </div>
+          <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 4px; display: flex; justify-content: space-between; font-size: 1rem; font-weight: 800; color: var(--text-primary);">
+            <span>Total Pembayaran</span>
+            <span id="grandTotalVal" style="color: var(--primary-pink);">Rp 0</span>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Checkout Action Bar -->
+    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); padding: 12px 16px; z-index: 80;">
+      <a href="checkout.html" id="btnCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1rem;">
+        Lanjut ke Checkout →
+      </a>
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/cart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+      window.addEventListener("cartUpdated", renderCart);
+    });
+
+    function renderCart() {
+      const cart = CartStore.getCart();
+      const container = document.getElementById("cartItemsList");
+      const checkoutBtn = document.getElementById("btnCheckout");
+
+      if (cart.items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span style="font-size: 3.5rem;">🛒</span>
+            <div class="empty-state-title">Keranjang Masih Kosong</div>
+            <p>Pilih menu lezat Mie Gacoan favoritmu sekarang.</p>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin-top: 16px;">Lihat Menu</a>
+          </div>
+        `;
+        checkoutBtn.style.pointerEvents = "none";
+        checkoutBtn.style.opacity = "0.5";
+        updateSummary();
+        return;
+      }
+
+      checkoutBtn.style.pointerEvents = "auto";
+      checkoutBtn.style.opacity = "1";
+
+      container.innerHTML = cart.items.map(item => `
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 12px;">
+          <div>
+            <h4 style="font-size: 0.95rem; font-weight: 800;">${item.product_name}</h4>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-pink); display: block; margin-top: 2px;">${Utils.formatRupiah(item.price_snapshot)}</span>
+            ${item.notes ? `<span style="font-size: 0.75rem; color: var(--text-secondary); font-style: italic;">Note: ${item.notes}</span>` : ''}
+          </div>
+
+          <div class="qty-ctrl">
+            <button onclick="updateQty('${item.item_key}', -1)" class="qty-btn">−</button>
+            <span class="qty-val">${item.quantity}</span>
+            <button onclick="updateQty('${item.item_key}', 1)" class="qty-btn">+</button>
+          </div>
+        </div>
+      `).join("");
+
+      updateSummary();
+    }
+
+    function updateQty(itemKey, delta) {
+      CartStore.updateQty(itemKey, delta);
+    }
+
+    function clearCartConfirm() {
+      if (confirm("Apakah Anda yakin ingin mengosongkan seluruh keranjang?")) {
+        CartStore.clearCart();
+      }
+    }
+
+    async function applyPromoCode() {
+      const code = document.getElementById("promoInput").value.trim().toUpperCase();
+      if (!code) return;
+
+      const sb = getSupabase();
+      const { data: promo, error } = await sb
+        .from("promotions")
+        .select("*")
+        .eq("code", code)
+        .eq("is_active", true)
+        .single();
+
+      if (error || !promo) {
+        Utils.showToast("Kode promo tidak valid atau telah kadaluarsa", "error");
+        return;
+      }
+
+      CartStore.applyPromo(promo);
+      document.getElementById("promoInput").value = "";
+    }
+
+    function updateSummary() {
+      const totals = CartStore.getTotals();
+      const cart = CartStore.getCart();
+
+      document.getElementById("subtotalVal").innerText = Utils.formatRupiah(totals.subtotal);
+      document.getElementById("discountVal").innerText = `-${Utils.formatRupiah(totals.discount)}`;
+      document.getElementById("taxVal").innerText = Utils.formatRupiah(totals.tax);
+      document.getElementById("serviceVal").innerText = Utils.formatRupiah(totals.service);
+      document.getElementById("grandTotalVal").innerText = Utils.formatRupiah(totals.grandTotal);
+
+      const promoBadge = document.getElementById("activePromoBadge");
+      if (cart.promo) {
+        promoBadge.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #d1fae5; color: #047857; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700;">
+            <span>Voucher Aktif: ${cart.promo.code} (${cart.promo.name})</span>
+            <button onclick="CartStore.removePromo();" style="background: none; color: #b91c1c; font-weight: 800; font-size: 0.9rem;">✕</button>
+          </div>
+        `;
+      } else {
+        promoBadge.innerHTML = "";
+      }
+    }
+  </script>
+</body>
+</html>

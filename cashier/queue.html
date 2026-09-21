@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layar Antrean Restoran - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container" style="overflow-y: hidden; height: 100vh; background: #020617;">
+
+  <!-- Header Navigation -->
+  <header class="app-header dark-header" style="padding: 16px 32px; background: #0f172a; border-bottom: 2px solid #1e293b;">
+    <div class="brand-logo" style="font-size: 1.6rem;">
+      <span class="brand-badge" style="font-size: 1rem; padding: 6px 16px;">ME</span>
+      <span style="color: var(--primary-pink);">GACOAN SIDOARJO PABEAN</span>
+    </div>
+    <div style="font-size: 1.1rem; font-weight: 800; color: #94a3b8;" id="liveClock">-</div>
+  </header>
+
+  <!-- Split Queue Columns (50% Preparing, 50% Ready) -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; padding: 24px; height: calc(100vh - 80px);">
+    
+    <!-- LEFT COLUMN: SEDANG DISIAPKAN -->
+    <div class="card card-dark" style="border-top: 6px solid var(--accent-orange); background: #0f172a; display: flex; flex-direction: column;">
+      <div style="padding: 16px; border-bottom: 1px solid #1e293b; text-align: center; background: #1e293b;">
+        <h2 style="font-size: 1.6rem; font-weight: 900; color: var(--accent-orange); text-transform: uppercase; letter-spacing: 1px;">
+          👨‍🍳 SEDANG DISIAPKAN
+        </h2>
+      </div>
+      
+      <div id="preparingQueueGrid" style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; overflow-y: auto; align-content: start;">
+        <!-- JS Rendered Big Queue Numbers -->
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: SIAP DIAMBIL (READY) -->
+    <div class="card card-dark" style="border-top: 6px solid var(--accent-green); background: #0f172a; display: flex; flex-direction: column;">
+      <div style="padding: 16px; border-bottom: 1px solid #1e293b; text-align: center; background: #1e293b;">
+        <h2 style="font-size: 1.6rem; font-weight: 900; color: var(--accent-green); text-transform: uppercase; letter-spacing: 1px;">
+          🔔 SIAP DIAMBIL (READY)
+        </h2>
+      </div>
+
+      <div id="readyQueueGrid" style="padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 16px; overflow-y: auto; align-content: start;">
+        <!-- JS Rendered Big Queue Numbers -->
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/realtime.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      startClock();
+      loadLiveQueue();
+
+      RealtimeManager.subscribeCashierOrders(() => loadLiveQueue(), () => loadLiveQueue());
+    });
+
+    function startClock() {
+      setInterval(() => {
+        const now = new Date();
+        document.getElementById("liveClock").innerText = now.toLocaleTimeString('id-ID');
+      }, 1000);
+    }
+
+    async function loadLiveQueue() {
+      const sb = getSupabase();
+      const today = new Date().toISOString().split("T")[0];
+
+      const { data: orders } = await sb
+        .from("orders")
+        .select("queue_number, order_status, order_type")
+        .gte("created_at", today)
+        .in("order_status", ["CONFIRMED", "PREPARING", "READY"])
+        .order("updated_at", { ascending: false });
+
+      if (!orders) return;
+
+      const prepGrid = document.getElementById("preparingQueueGrid");
+      const readyGrid = document.getElementById("readyQueueGrid");
+
+      const preparingList = orders.filter(o => o.order_status === "CONFIRMED" || o.order_status === "PREPARING" && o.queue_number);
+      const readyList = orders.filter(o => o.order_status === "READY" && o.queue_number);
+
+      prepGrid.innerHTML = preparingList.length > 0 ? preparingList.map(o => `
+        <div class="card card-dark" style="text-align: center; padding: 20px 10px; border: 2px solid var(--accent-orange); background: #1e293b;">
+          <h1 style="font-size: 2.5rem; font-weight: 900; color: var(--accent-orange);">${o.queue_number}</h1>
+        </div>
+      `).join("") : `<div style="grid-column: 1/-1; text-align: center; color: #64748b; font-size: 1.2rem; padding: 40px;">Belum ada pesanan disiapkan</div>`;
+
+      readyGrid.innerHTML = readyList.length > 0 ? readyList.map(o => `
+        <div class="card card-dark" style="text-align: center; padding: 20px 10px; border: 3px solid var(--accent-green); background: linear-gradient(135deg, #064e3b, #022c22); animation: pulse 1.5s infinite;">
+          <h1 style="font-size: 3rem; font-weight: 900; color: white;">${o.queue_number}</h1>
+        </div>
+      `).join("") : `<div style="grid-column: 1/-1; text-align: center; color: #64748b; font-size: 1.2rem; padding: 40px;">Belum ada pesanan siap</div>`;
+    }
+  </script>
+</body>
+</html>

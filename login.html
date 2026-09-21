@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Login - Mie Gacoan</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container" style="padding: 24px; justify-content: center;">
+    
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div class="brand-badge" style="display: inline-block; font-size: 1rem; padding: 6px 16px; margin-bottom: 12px;">MIE GACOAN</div>
+      <h2 style="font-size: 1.75rem; font-weight: 800;">Selamat Datang!</h2>
+      <p style="color: var(--text-secondary); font-size: 0.9rem;">Silakan masuk ke akun Anda untuk memesan</p>
+    </div>
+
+    <form id="loginForm" style="display: flex; flex-direction: column; gap: 16px;">
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Email</label>
+        <input type="email" id="loginEmail" required placeholder="nama@email.com" class="card" style="width: 100%; padding: 12px 16px;" />
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Password</label>
+        <input type="password" id="loginPassword" required placeholder="••••••••" class="card" style="width: 100%; padding: 12px 16px;" />
+      </div>
+
+      <button type="submit" id="btnLoginSubmit" class="btn btn-primary" style="margin-top: 8px;">
+        Masuk Akun
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-secondary);">
+      Belum punya akun? <a href="register.html" style="color: var(--primary-pink); font-weight: 700;">Daftar Sekarang</a>
+    </div>
+
+    <div style="margin-top: 32px; text-align: center;">
+      <a href="user/home.html" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: underline;">Lanjutkan Sebagai Tamu / Guest</a>
+    </div>
+
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnLoginSubmit");
+      btn.disabled = true;
+      btn.innerText = "Memproses...";
+
+      try {
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+        const { profile } = await AuthModule.login({ email, password });
+        
+        Utils.showToast("Login Berhasil!", "success");
+        setTimeout(() => {
+          if (profile.role === "KASIR") window.location.href = "cashier/dashboard.html";
+          else if (profile.role === "DAPUR") window.location.href = "kitchen/dashboard.html";
+          else if (profile.role === "ADMIN") window.location.href = "admin/dashboard.html";
+          else window.location.href = "user/home.html";
+        }, 800);
+      } catch (err) {
+        Utils.showToast(err.message || "Gagal login. Cek email & password Anda.", "error");
+        btn.disabled = false;
+        btn.innerText = "Masuk Akun";
+      }
+    });
+  </script>
+</body>
+</html>

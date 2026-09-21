@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Reservasi Meja Restoran - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <div class="user-container">
+    
+    <!-- Header Navigation -->
+    <header class="app-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="home.html" class="icon-btn">←</a>
+        <h1 class="header-title">Reservasi Meja Restoran</h1>
+      </div>
+    </header>
+
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px;">
+      
+      <!-- Intro Card -->
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none;">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">📅 Booking Tempat Duduk</h3>
+        <p style="font-size: 0.8rem; color: #94a3b8;">Pesan tempat untuk acara keluarga, ulang tahun, atau rombongan tanpa antre.</p>
+      </div>
+
+      <!-- Reservation Form -->
+      <form id="reservationForm" class="card" style="display: flex; flex-direction: column; gap: 14px;">
+        
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Pilih Meja Restoran *</label>
+          <select id="resTable" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;">
+            <option value="">-- Pilih Meja (Kapasitas Kursi) --</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Tanggal Reservasi *</label>
+            <input type="date" id="resDate" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          </div>
+          <div>
+            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jam Kedatangan *</label>
+            <input type="time" id="resTime" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jumlah Tamu / Orang *</label>
+          <input type="number" id="resGuestCount" min="1" max="20" required value="2" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nama Pemesan *</label>
+          <input type="text" id="resCustName" required placeholder="Nama Lengkap" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nomor Telepon (WhatsApp) *</label>
+          <input type="tel" id="resCustPhone" required placeholder="081234567890" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Catatan Tambahan (Opsional)</label>
+          <input type="text" id="resNotes" placeholder="Cth: Dekorasi ulang tahun, butuh baby chair..." class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        </div>
+
+        <button type="submit" id="btnResSubmit" class="btn btn-primary" style="margin-top: 6px;">
+          📅 Konfirmasi Reservasi
+        </button>
+
+      </form>
+
+    </main>
+
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script>
+    let currentUser = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Set min date to today
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("resDate").min = today;
+      document.getElementById("resDate").value = today;
+
+      await loadTables();
+      await autofillUser();
+    });
+
+    async function loadTables() {
+      const sb = getSupabase();
+      const select = document.getElementById("resTable");
+      const { data: tables } = await sb.from("tables").select("*").eq("branch_id", window.APP_CONFIG.DEFAULT_BRANCH_ID).order("table_number");
+
+      if (tables) {
+        select.innerHTML = '<option value="">-- Pilih Meja (Kapasitas Kursi) --</option>' + tables.map(t => `
+          <option value="${t.id}">${t.table_number} (${t.capacity} Kursi)</option>
+        `).join("");
+      }
+    }
+
+    async function autofillUser() {
+      currentUser = await getCurrentUserProfile();
+      if (currentUser) {
+        document.getElementById("resCustName").value = currentUser.full_name || '';
+        document.getElementById("resCustPhone").value = currentUser.phone || '';
+      }
+    }
+
+    document.getElementById("reservationForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnResSubmit");
+      btn.disabled = true;
+      btn.innerText = "Memproses Reservasi...";
+
+      try {
+        const table_id = document.getElementById("resTable").value;
+        const reservation_date = document.getElementById("resDate").value;
+        const reservation_time = document.getElementById("resTime").value;
+        const guest_count = parseInt(document.getElementById("resGuestCount").value);
+        const customer_name = document.getElementById("resCustName").value.trim();
+        const customer_phone = document.getElementById("resCustPhone").value.trim();
+        const notes = document.getElementById("resNotes").value.trim();
+
+        const sb = getSupabase();
+
+        // Create Reservation Record
+        const { data: res, error } = await sb
+          .from("reservations")
+          .insert({
+            user_id: currentUser?.id || null,
+            branch_id: window.APP_CONFIG.DEFAULT_BRANCH_ID,
+            table_id,
+            reservation_date,
+            reservation_time,
+            guest_count,
+            customer_name,
+            customer_phone,
+            notes: notes || null,
+            status: "PENDING"
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        Utils.showToast("Reservasi Berhasil Dibuat!", "success");
+        setTimeout(() => {
+          window.location.href = `reservation-detail.html?id=${res.id}`;
+        }, 800);
+
+      } catch (err) {
+        Utils.showToast(err.message || "Gagal membuat reservasi. Meja mungkin sudah dibooking pada jam tersebut.", "error");
+        btn.disabled = false;
+        btn.innerText = "📅 Konfirmasi Reservasi";
+      }
+    });
+  </script>
+</body>
+</html>

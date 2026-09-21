@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kasir POS - Dashboard - Mie Gacoan</title>
+  <link rel="stylesheet" href="../css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="dashboard-container">
+
+  <!-- Top Dark Header Navigation -->
+  <header class="app-header dark-header" style="padding: 14px 24px;">
+    <div class="brand-logo">
+      <span class="brand-badge">POS</span>
+      <span>Kasir Mie Gacoan</span>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <a href="manual-order.html" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">
+        ➕ Input Order Manual (Walk-In)
+      </a>
+      <a href="queue.html" class="btn btn-dark" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">
+        📺 Layar Antrean
+      </a>
+      <span id="cashierUser" style="font-size: 0.85rem; color: #94a3b8; font-weight: 600;">Kasir</span>
+      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar">🚪</button>
+    </div>
+  </header>
+
+  <!-- Sub Navigation Bar -->
+  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px;">
+    <a href="dashboard.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📊 Dashboard</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Kelola Pesanan</a>
+    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📅 Kelola Reservasi</a>
+    <a href="manual-order.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛍️ Kasir Manual</a>
+  </div>
+
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Realtime Counter Metrics Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+      
+      <div class="card card-dark" style="border-left: 4px solid var(--accent-orange);">
+        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Menunggu Pembayaran</span>
+        <h2 id="cntPending" style="font-size: 2.2rem; font-weight: 900; color: var(--accent-orange); margin-top: 4px;">0</h2>
+      </div>
+
+      <div class="card card-dark" style="border-left: 4px solid #3b82f6;">
+        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Sudah Dibayar (PAID)</span>
+        <h2 id="cntPaid" style="font-size: 2.2rem; font-weight: 900; color: #3b82f6; margin-top: 4px;">0</h2>
+      </div>
+
+      <div class="card card-dark" style="border-left: 4px solid var(--accent-purple);">
+        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Sedang Disiapkan Dapur</span>
+        <h2 id="cntPreparing" style="font-size: 2.2rem; font-weight: 900; color: var(--accent-purple); margin-top: 4px;">0</h2>
+      </div>
+
+      <div class="card card-dark" style="border-left: 4px solid var(--accent-green);">
+        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Siap Diambil (READY)</span>
+        <h2 id="cntReady" style="font-size: 2.2rem; font-weight: 900; color: var(--accent-green); margin-top: 4px;">0</h2>
+      </div>
+
+      <div class="card card-dark" style="border-left: 4px solid #64748b;">
+        <span style="font-size: 0.8rem; color: #94a3b8; text-transform: uppercase;">Selesai Hari Ini</span>
+        <h2 id="cntCompleted" style="font-size: 2.2rem; font-weight: 900; color: #cbd5e1; margin-top: 4px;">0</h2>
+      </div>
+
+    </div>
+
+    <!-- Live Recent Paid Orders Table for Immediate Action -->
+    <div class="card card-dark">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 1.1rem; font-weight: 800;">⚡ Pesanan Terbaru Masuk (Realtime)</h3>
+        <a href="orders.html" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">Lihat Semua Pesanan →</a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No. Antrean</th>
+              <th>No. Order</th>
+              <th>Tipe / Meja</th>
+              <th>Status Pembayaran</th>
+              <th>Status Pesanan</th>
+              <th>Total Tagihan</th>
+              <th>Waktu</th>
+              <th>Aksi Kasir</th>
+            </tr>
+          </thead>
+          <tbody id="recentOrdersBody">
+            <!-- JS Rendered Rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/realtime.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const profile = await AuthModule.requireRole(["KASIR", "ADMIN"]);
+      if (profile) {
+        document.getElementById("cashierUser").innerText = profile.full_name;
+      }
+
+      await loadDashboardMetrics();
+      await loadRecentOrders();
+
+      RealtimeManager.subscribeCashierOrders(() => {
+        loadDashboardMetrics();
+        loadRecentOrders();
+      }, () => {
+        loadDashboardMetrics();
+        loadRecentOrders();
+      });
+    });
+
+    async function loadDashboardMetrics() {
+      const sb = getSupabase();
+      const today = new Date().toISOString().split("T")[0];
+
+      const { data: orders } = await sb.from("orders").select("payment_status, order_status").gte("created_at", today);
+
+      if (!orders) return;
+
+      let pending = 0, paid = 0, preparing = 0, ready = 0, completed = 0;
+
+      orders.forEach(o => {
+        if (o.payment_status === "PENDING" || o.order_status === "PENDING_PAYMENT") pending++;
+        if (o.order_status === "PAID" || o.order_status === "CONFIRMED") paid++;
+        if (o.order_status === "PREPARING") preparing++;
+        if (o.order_status === "READY") ready++;
+        if (o.order_status === "COMPLETED") completed++;
+      });
+
+      document.getElementById("cntPending").innerText = pending;
+      document.getElementById("cntPaid").innerText = paid;
+      document.getElementById("cntPreparing").innerText = preparing;
+      document.getElementById("cntReady").innerText = ready;
+      document.getElementById("cntCompleted").innerText = completed;
+    }
+
+    async function loadRecentOrders() {
+      const sb = getSupabase();
+      const tbody = document.getElementById("recentOrdersBody");
+
+      const { data: orders } = await sb
+        .from("orders")
+        .select("*, tables(table_number)")
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #94a3b8; padding: 24px;">Belum ada transaksi hari ini</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = orders.map(o => {
+        const badgeInfo = Utils.getOrderStatusBadge(o.order_status);
+        return `
+          <tr>
+            <td style="font-weight: 900; font-size: 1.1rem; color: var(--primary-pink);">${o.queue_number || '-'}</td>
+            <td style="font-family: monospace;">#${o.order_number}</td>
+            <td>
+              ${Utils.getOrderTypeBadge(o.order_type)}
+              ${o.tables?.table_number ? `<span class="badge badge-dinein">${o.tables.table_number}</span>` : ''}
+            </td>
+            <td><span class="badge ${o.payment_status === 'PAID' ? 'badge-paid' : 'badge-pending'}">${o.payment_status}</span></td>
+            <td><span class="badge ${badgeInfo.class}">${badgeInfo.label}</span></td>
+            <td style="font-weight: 700;">${Utils.formatRupiah(o.grand_total)}</td>
+            <td style="font-size: 0.8rem; color: #94a3b8;">${Utils.formatDateTime(o.created_at)}</td>
+            <td>
+              <div style="display: flex; gap: 6px;">
+                ${o.payment_status === 'UNPAID' || o.payment_status === 'PENDING' ? `
+                  <button onclick="confirmManualPayment('${o.id}')" class="btn btn-success" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Terima Cash</button>
+                ` : ''}
+                ${o.order_status === 'PAID' ? `
+                  <button onclick="confirmOrder('${o.id}')" class="btn btn-primary" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Konfirmasi Dapur</button>
+                ` : ''}
+                ${o.order_status === 'READY' ? `
+                  <button onclick="completeOrder('${o.id}')" class="btn btn-success" style="width: auto; padding: 4px 8px; font-size: 0.75rem;">Selesaikan</button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    async function confirmManualPayment(orderId) {
+      if (!confirm("Konfirmasi penerimaan pembayaran Cash/Manual dari customer?")) return;
+      const sb = getSupabase();
+
+      // Fetch order details
+      const { data: order } = await sb.from("orders").select("*").eq("id", orderId).single();
+      if (!order) return;
+
+      const { data: queueNum } = await sb.rpc("generate_queue_number", {
+        p_branch_id: order.branch_id,
+        p_order_id: orderId,
+        p_order_type: order.order_type
+      });
+
+      await sb.rpc("deduct_stock_on_order", { p_order_id: orderId });
+
+      await sb.from("orders").update({
+        payment_status: "PAID",
+        order_status: "CONFIRMED",
+        queue_number: queueNum,
+        updated_at: new Date().toISOString()
+      }).eq("id", orderId);
+
+      await sb.from("payments").insert({
+        order_id: orderId,
+        payment_method: "CASH",
+        amount: order.grand_total,
+        status: "PAID",
+        paid_at: new Date().toISOString()
+      });
+
+      Utils.showToast("Pembayaran Cash Dikonfirmasi!", "success");
+      loadDashboardMetrics();
+      loadRecentOrders();
+    }
+
+    async function confirmOrder(orderId) {
+      const sb = getSupabase();
+      await sb.from("orders").update({ order_status: "CONFIRMED" }).eq("id", orderId);
+      Utils.showToast("Pesanan Diteruskan ke Dapur", "success");
+      loadDashboardMetrics();
+      loadRecentOrders();
+    }
+
+    async function completeOrder(orderId) {
+      const sb = getSupabase();
+      await sb.from("orders").update({ order_status: "COMPLETED" }).eq("id", orderId);
+      Utils.showToast("Pesanan Selesai", "success");
+      loadDashboardMetrics();
+      loadRecentOrders();
+    }
+  </script>
+</body>
+</html>
