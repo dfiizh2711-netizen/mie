@@ -43,28 +43,40 @@ const AuthModule = {
     return { session: data.session, profile };
   },
 
+  // Helper to resolve relative path prefix back to root directory
+  _getPrefix() {
+    const path = window.location.pathname.replace(/\\/g, '/');
+    const isSubdir = path.includes('/user/') ||
+                     path.includes('/cashier/') ||
+                     path.includes('/kitchen/') ||
+                     path.includes('/admin/');
+    return isSubdir ? "../" : "./";
+  },
+
   // Logout User
   async logout() {
     const sb = getSupabase();
     await sb.auth.signOut();
-    window.location.href = "/login.html";
+    const prefix = this._getPrefix();
+    window.location.href = `${prefix}login.html`;
   },
 
   // Role Guard Check for Pages
   async requireRole(allowedRoles = []) {
     const profile = await getCurrentUserProfile();
+    const prefix = this._getPrefix();
 
     if (!profile) {
-      window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
+      window.location.href = `${prefix}login.html?redirect=${encodeURIComponent(window.location.pathname)}`;
       return null;
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(profile.role)) {
       alert(`Akses Ditolak: Halaman ini memerlukan hak akses [${allowedRoles.join(", ")}].`);
-      if (profile.role === "KASIR") window.location.href = "/cashier/dashboard.html";
-      else if (profile.role === "DAPUR") window.location.href = "/kitchen/dashboard.html";
-      else if (profile.role === "ADMIN") window.location.href = "/admin/dashboard.html";
-      else window.location.href = "/user/home.html";
+      if (profile.role === "KASIR") window.location.href = `${prefix}cashier/dashboard.html`;
+      else if (profile.role === "DAPUR") window.location.href = `${prefix}kitchen/dashboard.html`;
+      else if (profile.role === "ADMIN") window.location.href = `${prefix}admin/dashboard.html`;
+      else window.location.href = `${prefix}user/home.html`;
       return null;
     }
 
