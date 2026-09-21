@@ -1,0 +1,62 @@
+/* ============================================================================
+   CONTAINER & LAYOUT SYSTEM: css/layout.css
+   System: Cafe Online & Offline Ordering System
+   ============================================================================ */
+
+/* Mobile Frame Container for Customer Web App */
+.user-container {
+  width: 100%;
+  max-width: var(--container-mobile-max);
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  margin: 0 auto;
+}
+
+/* Full Width Container for Cashier, KDS, Admin */
+.dashboard-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Responsive Product Grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+/* Section Wrapper */
+.section-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--text-primary);
+}

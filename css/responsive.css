@@ -1,0 +1,46 @@
+/* ============================================================================
+   RESPONSIVE OVERHAUL & BREAKPOINTS: css/responsive.css
+   System: Cafe Online & Offline Ordering System
+   ============================================================================ */
+
+/* Small Mobile Screens (320px - 375px) */
+@media (max-width: 375px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-2);
+  }
+
+  .product-info {
+    padding: var(--space-2);
+  }
+
+  .product-title {
+    font-size: var(--font-xs);
+  }
+
+  .product-price {
+    font-size: var(--font-sm);
+  }
+
+  .floating-cart-bar {
+    width: calc(100% - 20px);
+    bottom: 10px;
+    padding: 10px 14px;
+  }
+}
+
+/* Tablet & Up (768px+) */
+@media (min-width: 768px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+/* Desktop Screens (1024px+) */
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

@@ -1,0 +1,101 @@
+/* ============================================================================
+   NAVIGATION & HEADERS: css/navigation.css
+   System: Cafe Online & Offline Ordering System
+   ============================================================================ */
+
+/* App Header (Customer) */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: 60px;
+}
+
+/* Dark Header (Staff Dashboard) */
+.dark-header {
+  background: rgba(30, 41, 59, 0.95);
+  border-bottom: 1px solid var(--border-dark);
+  color: var(--text-light);
+}
+
+.header-title {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Brand Logo Component */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 900;
+  font-size: var(--font-xl);
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+}
+
+.brand-badge {
+  background: linear-gradient(135deg, var(--primary-pink), #c2185b);
+  color: white;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
+}
+
+/* Bottom Navigation Bar (Customer Mobile View) */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--container-mobile-max);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: var(--z-fixed-bar);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: var(--transition-fast);
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+}
+
+.nav-item.active {
+  color: var(--primary-pink);
+  font-weight: 800;
+}
+
+.nav-item svg, .nav-item .icon {
+  font-size: 1.25rem;
+}

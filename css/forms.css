@@ -1,0 +1,103 @@
+/* ============================================================================
+   FORM SYSTEM & INPUT CONTROLS: css/forms.css
+   System: Cafe Online & Offline Ordering System
+   ============================================================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.form-label {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.form-label-dark {
+  color: var(--text-light);
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card-light);
+  color: var(--text-primary);
+  font-size: var(--font-sm);
+  transition: var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px var(--primary-pink-muted);
+}
+
+.form-control-dark {
+  background: var(--bg-subtle-dark);
+  border-color: var(--border-dark);
+  color: var(--text-light);
+}
+
+.form-control-dark:focus {
+  border-color: var(--primary-pink);
+  box-shadow: 0 0 0 3px var(--primary-pink-muted);
+}
+
+/* Quantity Control Component */
+.qty-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-subtle-light);
+  border-radius: var(--radius-full);
+  padding: 3px 6px;
+}
+
+.qty-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: white;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: var(--font-base);
+  box-shadow: var(--shadow-xs);
+  transition: var(--transition-fast);
+}
+
+.qty-btn:active {
+  transform: scale(0.9);
+}
+
+.qty-val {
+  font-weight: 800;
+  font-size: var(--font-sm);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Search Input Group */
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-box input {
+  padding-left: 42px;
+}
+
+.search-box .search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}

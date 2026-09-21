@@ -36,7 +36,7 @@
     </div>
 
     <!-- Product Grid Container -->
-    <main id="productGrid" style="padding: 16px; display: grid; grid-template-columns: 1fr; gap: 14px; padding-bottom: 100px;">
+    <main id="productGrid" class="product-grid" style="padding: 16px; padding-bottom: 100px;">
       <!-- JS Rendered Products -->
     </main>
 
@@ -156,14 +156,16 @@
       }
 
       grid.innerHTML = filtered.map(p => `
-        <div class="card" style="display: flex; gap: 12px; align-items: center; padding: 12px;">
-          <img src="${Utils.getProductImage(p.image_url, p.slug)}" style="width: 85px; height: 85px; object-fit: cover; border-radius: var(--radius-md);" onerror="this.src='../asset/hero-banner.png'" />
-          <div style="flex: 1;">
-            <h4 style="font-size: 0.95rem; font-weight: 800;">${p.name}</h4>
-            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 2px; line-clamp: 2; display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;">${p.description || ''}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-              <span style="font-weight: 800; font-size: 0.95rem; color: var(--primary-pink);">${Utils.formatRupiah(p.base_price)}</span>
-              <button onclick="openProductModal('${p.id}')" ${!p.is_available ? 'disabled' : ''} class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">
+        <div class="product-card">
+          <div class="product-image-wrap">
+            <img src="${Utils.getProductImage(p.image_url, p.slug)}" alt="${p.name}" onerror="this.src='../asset/hero-banner.png'" />
+          </div>
+          <div class="product-info">
+            <h4 class="product-title">${p.name}</h4>
+            <p style="font-size: 0.7rem; color: var(--text-secondary);" class="line-clamp-1">${p.description || ''}</p>
+            <div class="product-footer">
+              <span class="product-price">${Utils.formatRupiah(p.base_price)}</span>
+              <button onclick="openProductModal('${p.id}')" ${!p.is_available ? 'disabled' : ''} class="btn btn-primary btn-sm" style="width: auto;">
                 ${p.is_available ? '+ Tambah' : 'Habis'}
               </button>
             </div>
