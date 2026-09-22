@@ -87,6 +87,14 @@ const RealtimeManager = {
           if (onTicketUpdateCallback) onTicketUpdateCallback(payload);
         }
       )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'orders' },
+        (payload) => {
+          console.log("Kitchen Master Order Event:", payload);
+          if (onTicketUpdateCallback) onTicketUpdateCallback(payload);
+        }
+      )
       .subscribe();
 
     this.activeChannels[channelName] = channel;

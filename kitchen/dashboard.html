@@ -96,33 +96,39 @@
         .in("status", ["NEW", "PREPARING", "READY"])
         .order("created_at", { ascending: true });
 
-      // 2. Fallback ONLY if query fails due to database error (e.g. table missing or RLS error)
-      if (error || !list) {
-        console.warn("kitchen_orders query error, falling back to direct orders:", error);
-        const { data: directOrders } = await sb
-          .from("orders")
-          .select("*, tables(table_number), order_items(*)")
-          .not("order_status", "in", "('COMPLETED','CANCELLED')")
-          .order("created_at", { ascending: true });
+      let tickets = list || [];
 
-        if (directOrders && directOrders.length > 0) {
-          list = directOrders.map(o => {
+      // 2. Fetch active orders from orders table to ensure any order not in kitchen_orders is included
+      const { data: directOrders } = await sb
+        .from("orders")
+        .select("*, tables(table_number), order_items(*)")
+        .not("order_status", "in", "('COMPLETED','CANCELLED','EXPIRED','REFUNDED')")
+        .order("created_at", { ascending: true });
+
+      if (directOrders && directOrders.length > 0) {
+        const existingOrderIds = new Set(tickets.map(t => t.order_id || (t.orders && t.orders.id)));
+
+        for (const o of directOrders) {
+          if (!existingOrderIds.has(o.id)) {
+            // Auto sync ticket to DB asynchronously
+            Utils.syncKitchenTicket(o.id);
+
             let kStatus = "NEW";
             if (o.order_status === "PREPARING") kStatus = "PREPARING";
             else if (o.order_status === "READY") kStatus = "READY";
 
-            return {
+            tickets.push({
               id: `direct_${o.id}`,
               order_id: o.id,
               status: kStatus,
               created_at: o.created_at,
               orders: o
-            };
-          });
+            });
+          }
         }
       }
 
-      kdsTickets = list || [];
+      kdsTickets = tickets;
       renderKdsColumns();
     }
 
@@ -227,6 +233,13 @@
         if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
         if (newStatus === 'COMPLETED') payload.completed_at = new Date().toISOString();
         await sb.from("kitchen_orders").update(payload).eq("id", ticketId);
+      } else if (targetOrderId) {
+        await Utils.syncKitchenTicket(targetOrderId);
+        const payload = { status: newStatus };
+        if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
+        if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
+        if (newStatus === 'COMPLETED') payload.completed_at = new Date().toISOString();
+        await sb.from("kitchen_orders").update(payload).eq("order_id", targetOrderId);
       }
 
       // Sync master order status
@@ -237,7 +250,7 @@
       }
 
       Utils.showToast(`Status tiket diubah ke ${newStatus}`, "success");
-      loadKdsTickets();
+      await loadKdsTickets();
     }
   </script>
 </body>
