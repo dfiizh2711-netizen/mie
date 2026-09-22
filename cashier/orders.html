@@ -151,6 +151,9 @@
     async function updateOrderStatus(orderId, newStatus) {
       const sb = getSupabase();
       await sb.from("orders").update({ order_status: newStatus }).eq("id", orderId);
+      if (newStatus === 'CONFIRMED' || newStatus === 'PAID') {
+        await Utils.syncKitchenTicket(orderId);
+      }
       Utils.showToast(`Status order diubah menjadi ${newStatus}`, "success");
       loadOrders();
     }

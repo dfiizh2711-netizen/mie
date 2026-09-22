@@ -129,6 +129,38 @@ const Utils = {
     }
 
     return target;
+  },
+
+  // Sync / Create Kitchen Order Ticket for confirmed/paid orders
+  async syncKitchenTicket(orderId) {
+    if (!orderId) return;
+    try {
+      const sb = getSupabase();
+      const { data: existingKo } = await sb.from("kitchen_orders").select("id").eq("order_id", orderId).maybeSingle();
+      if (!existingKo) {
+        const { data: newKo, error: koErr } = await sb.from("kitchen_orders").insert({
+          order_id: orderId,
+          status: "NEW"
+        }).select().single();
+
+        if (newKo && !koErr) {
+          const { data: items } = await sb.from("order_items").select("*").eq("order_id", orderId);
+          if (items && items.length > 0) {
+            const koItems = items.map(it => ({
+              kitchen_order_id: newKo.id,
+              order_item_id: it.id,
+              product_name: it.product_name,
+              quantity: it.quantity,
+              notes: it.notes || "",
+              status: "NEW"
+            }));
+            await sb.from("kitchen_order_items").insert(koItems);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("syncKitchenTicket warning:", err);
+    }
   }
 };
 

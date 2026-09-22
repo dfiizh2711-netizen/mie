@@ -88,6 +88,25 @@
 
     async function loadKdsTickets() {
       const sb = getSupabase();
+
+      // Auto-sync missing kitchen tickets for confirmed/paid orders
+      try {
+        const { data: activeOrders } = await sb
+          .from("orders")
+          .select("id, order_status, payment_status")
+          .or("order_status.in.(CONFIRMED,PAID,PREPARING,READY),payment_status.eq.PAID")
+          .not("order_status", "eq", "COMPLETED")
+          .not("order_status", "eq", "CANCELLED");
+
+        if (activeOrders && activeOrders.length > 0) {
+          for (const ord of activeOrders) {
+            await Utils.syncKitchenTicket(ord.id);
+          }
+        }
+      } catch (err) {
+        console.warn("Auto-sync kitchen tickets warning:", err);
+      }
+
       const { data: list } = await sb
         .from("kitchen_orders")
         .select("*, orders(*, tables(table_number), order_items(*))")

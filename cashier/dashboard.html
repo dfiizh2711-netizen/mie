@@ -225,6 +225,8 @@
         paid_at: new Date().toISOString()
       });
 
+      await Utils.syncKitchenTicket(orderId);
+
       Utils.showToast("Pembayaran Cash Dikonfirmasi!", "success");
       loadDashboardMetrics();
       loadRecentOrders();
@@ -233,6 +235,7 @@
     async function confirmOrder(orderId) {
       const sb = getSupabase();
       await sb.from("orders").update({ order_status: "CONFIRMED" }).eq("id", orderId);
+      await Utils.syncKitchenTicket(orderId);
       Utils.showToast("Pesanan Diteruskan ke Dapur", "success");
       loadDashboardMetrics();
       loadRecentOrders();

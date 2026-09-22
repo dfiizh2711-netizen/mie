@@ -350,6 +350,8 @@
           paid_at: new Date().toISOString()
         });
 
+        await Utils.syncKitchenTicket(order.id);
+
         alert(`✅ Transaksi Berhasil!\n\nNomor Antrean: ${queueNum}\nTotal: ${Utils.formatRupiah(grandTotal)}\nMetode: ${posPaymentMethod}`);
 
         posCart = [];
