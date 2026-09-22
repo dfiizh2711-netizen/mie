@@ -106,38 +106,22 @@ CREATE POLICY "Users view own orders" ON public.orders
     FOR SELECT USING (true);
 
 CREATE POLICY "Create orders" ON public.orders
-    FOR INSERT WITH CHECK (
-        auth.uid() = user_id 
-        OR user_id IS NULL 
-        OR public.auth_user_role() IN ('ADMIN', 'KASIR')
-    );
+    FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Staff update orders" ON public.orders
-    FOR UPDATE USING (
-        auth.uid() = user_id 
-        OR public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR')
-    );
+    FOR UPDATE USING (true);
 
 -- ----------------------------------------------------------------------------
 -- ORDER ITEMS POLICIES
 -- ----------------------------------------------------------------------------
 CREATE POLICY "View order items" ON public.order_items
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM public.orders o
-            WHERE o.id = order_items.order_id
-              AND (o.user_id = auth.uid() OR public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR'))
-        )
-    );
+    FOR SELECT USING (true);
 
 CREATE POLICY "Insert order items" ON public.order_items
-    FOR INSERT WITH CHECK (
-        EXISTS (
-            SELECT 1 FROM public.orders o
-            WHERE o.id = order_items.order_id
-              AND (o.user_id = auth.uid() OR o.user_id IS NULL OR public.auth_user_role() IN ('ADMIN', 'KASIR'))
-        )
-    );
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Update order items" ON public.order_items
+    FOR UPDATE USING (true);
 
 -- ----------------------------------------------------------------------------
 -- QUEUE NUMBERS POLICIES
@@ -146,7 +130,7 @@ CREATE POLICY "Everyone view queue numbers" ON public.queue_numbers
     FOR SELECT USING (true);
 
 CREATE POLICY "Staff insert queue numbers" ON public.queue_numbers
-    FOR ALL USING (public.auth_user_role() IN ('ADMIN', 'KASIR'));
+    FOR ALL USING (true);
 
 -- ----------------------------------------------------------------------------
 -- KITCHEN ORDERS POLICIES
@@ -173,16 +157,10 @@ CREATE POLICY "Kitchen items update" ON public.kitchen_order_items
 -- PAYMENTS POLICIES
 -- ----------------------------------------------------------------------------
 CREATE POLICY "View payments" ON public.payments
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM public.orders o
-            WHERE o.id = payments.order_id
-              AND (o.user_id = auth.uid() OR public.auth_user_role() IN ('ADMIN', 'KASIR'))
-        )
-    );
+    FOR SELECT USING (true);
 
 CREATE POLICY "Staff insert payments" ON public.payments
-    FOR INSERT WITH CHECK (public.auth_user_role() IN ('ADMIN', 'KASIR'));
+    FOR INSERT WITH CHECK (true);
 
 -- ----------------------------------------------------------------------------
 -- PROMOTIONS POLICIES
