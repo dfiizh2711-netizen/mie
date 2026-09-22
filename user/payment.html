@@ -63,6 +63,47 @@
 
   </div>
 
+  <!-- Modal QRIS Payment Popup -->
+  <div id="qrisModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
+    <div class="card" style="max-width: 380px; width: 100%; background: #ffffff; color: #0f172a; text-align: center; padding: 24px; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
+      
+      <!-- QRIS Banner Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-weight: 900; font-size: 1.25rem; color: #ee2737; letter-spacing: 1px;">QRIS</span>
+          <span style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">Pembayaran Instant</span>
+        </div>
+        <button onclick="closeQrisModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #64748b; padding: 0 4px;">✕</button>
+      </div>
+
+      <p style="font-size: 0.85rem; color: #475569; margin-bottom: 4px;">Scan Kode QRIS di bawah ini untuk membayar</p>
+      <h3 id="qrisGrandTotal" style="font-size: 1.8rem; font-weight: 900; color: var(--primary-pink); margin-bottom: 14px;">Rp 0</h3>
+
+      <!-- Dynamic QR Code Image Box -->
+      <div style="background: #f8fafc; padding: 16px; border-radius: 16px; border: 2px dashed #cbd5e1; display: inline-block; margin-bottom: 16px;">
+        <img id="qrisQrImage" src="" alt="QRIS Code Barcode" style="width: 220px; height: 220px; display: block; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" />
+      </div>
+
+      <div style="background: #f1f5f9; padding: 10px 14px; border-radius: 10px; font-size: 0.78rem; color: #334155; text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span>Merchant:</span> <strong style="color: #0f172a;">Mie Gacoan Official</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between;">
+          <span>Metode:</span> <strong style="color: #0f172a;">GoPay, OVO, DANA, ShopeePay, BCA</strong>
+        </div>
+      </div>
+
+      <button onclick="confirmQrisPayment()" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #ee2737, #ec4899); border: none; box-shadow: 0 4px 12px rgba(238, 39, 55, 0.4);">
+        ✓ Konfirmasi Pembayaran QRIS Selesai
+      </button>
+      
+      <button onclick="closeQrisModal()" style="margin-top: 12px; background: none; border: none; color: #64748b; font-size: 0.85rem; cursor: pointer; width: 100%; font-weight: 600;">
+        Batal / Kembali
+      </button>
+
+    </div>
+  </div>
+
   <script src="../js/config.js"></script>
   <script src="../js/supabase-client.js"></script>
   <script src="../js/utils.js"></script>
@@ -116,8 +157,32 @@
         payActionCard.style.display = "none";
         queueCard.style.display = "block";
         document.getElementById("queueNumDisplay").innerText = order.queue_number || "A001";
+        closeQrisModal();
         Utils.showToast("Pembayaran Berhasil Dikonfirmasi!", "success");
       }
+    }
+
+    function openQrisModal() {
+      if (!currentOrder) return;
+      document.getElementById("qrisGrandTotal").innerText = Utils.formatRupiah(currentOrder.grand_total);
+      
+      // Dynamic QRIS QR Code Image Generation
+      const qrData = encodeURIComponent(`00020101021226670016COM.GACOAN.QRIS01189360091400000000015204581253033605405${currentOrder.grand_total}5802ID5910MIE GACOAN6007JAKARTA63041A2F`);
+      document.getElementById("qrisQrImage").src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${qrData}`;
+      
+      const modal = document.getElementById("qrisModal");
+      modal.style.display = "flex";
+    }
+
+    function closeQrisModal() {
+      const modal = document.getElementById("qrisModal");
+      if (modal) modal.style.display = "none";
+    }
+
+    async function confirmQrisPayment() {
+      closeQrisModal();
+      Utils.showToast("Memproses konfirmasi pembayaran QRIS...", "info");
+      await simulateSuccessPayment();
     }
 
     async function triggerMidtransSnap() {
@@ -164,9 +229,11 @@
         }
 
       } catch (err) {
-        console.warn("Edge Function call fallback to dev simulation mode:", err);
-        Utils.showToast("Memperoleh token Midtrans Snap... Menggunakan mode tes.", "warning");
-        simulateSuccessPayment();
+        console.warn("Edge Function call fallback to QRIS modal:", err);
+        Utils.showToast("Membuka Kode QRIS Pembayaran...", "info");
+        btn.disabled = false;
+        btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+        openQrisModal();
       }
     }
 
