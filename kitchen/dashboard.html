@@ -89,28 +89,37 @@
     async function loadKdsTickets() {
       const sb = getSupabase();
 
-      // Auto-sync missing kitchen tickets for all active orders
-      try {
-        const { data: activeOrders } = await sb
-          .from("orders")
-          .select("id")
-          .neq("order_status", "COMPLETED")
-          .neq("order_status", "CANCELLED");
-
-        if (activeOrders && activeOrders.length > 0) {
-          for (const ord of activeOrders) {
-            await Utils.syncKitchenTicket(ord.id);
-          }
-        }
-      } catch (err) {
-        console.warn("Auto-sync kitchen tickets warning:", err);
-      }
-
-      const { data: list } = await sb
+      // 1. Try loading from kitchen_orders first
+      let { data: list } = await sb
         .from("kitchen_orders")
-        .select("*, orders(*, tables(table_number), order_items(*))")
+        .select("*, orders(*, tables(table_number), order_items(*)), kitchen_order_items(*)")
         .in("status", ["NEW", "PREPARING", "READY"])
         .order("created_at", { ascending: true });
+
+      // 2. Fallback: If kitchen_orders is empty or RLS restricted, load active orders directly from `orders` table
+      if (!list || list.length === 0) {
+        const { data: directOrders } = await sb
+          .from("orders")
+          .select("*, tables(table_number), order_items(*)")
+          .not("order_status", "in", "('COMPLETED','CANCELLED')")
+          .order("created_at", { ascending: true });
+
+        if (directOrders && directOrders.length > 0) {
+          list = directOrders.map(o => {
+            let kStatus = "NEW";
+            if (o.order_status === "PREPARING") kStatus = "PREPARING";
+            else if (o.order_status === "READY") kStatus = "READY";
+
+            return {
+              id: `direct_${o.id}`,
+              order_id: o.id,
+              status: kStatus,
+              created_at: o.created_at,
+              orders: o
+            };
+          });
+        }
+      }
 
       kdsTickets = list || [];
       renderKdsColumns();
@@ -209,16 +218,23 @@
     async function updateTicketStatus(ticketId, newStatus, orderId) {
       const sb = getSupabase();
       
-      const payload = { status: newStatus };
-      if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
-      if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
+      const targetOrderId = orderId || (ticketId.startsWith("direct_") ? ticketId.replace("direct_", "") : null);
 
-      await sb.from("kitchen_orders").update(payload).eq("id", ticketId);
+      if (!ticketId.startsWith("direct_")) {
+        const payload = { status: newStatus };
+        if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
+        if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
+        await sb.from("kitchen_orders").update(payload).eq("id", ticketId);
+      }
 
       // Sync master order status
-      await sb.from("orders").update({ order_status: newStatus }).eq("id", orderId);
+      if (targetOrderId) {
+        let mappedStatus = newStatus;
+        if (newStatus === "NEW") mappedStatus = "CONFIRMED";
+        await sb.from("orders").update({ order_status: mappedStatus }).eq("id", targetOrderId);
+      }
 
-      Utils.showToast(`Tiket Dapur diupdate: ${newStatus}`, "success");
+      Utils.showToast(`Status tiket diubah ke ${newStatus}`, "success");
       loadKdsTickets();
     }
   </script>
