@@ -11,8 +11,29 @@
 
   <div class="user-container">
     
-    <!-- Header Navigation -->
-    <header class="app-header">
+    <!-- Desktop Header Navigation -->
+    <header class="desktop-nav-header">
+      <div class="desktop-nav-container">
+        <a href="home.html" class="desktop-logo">
+          <span class="logo-badge">GACOAN</span>
+          <span class="logo-text">Mie Gacoan</span>
+        </a>
+        <nav class="desktop-nav-links">
+          <a href="home.html" class="desktop-nav-link">Beranda</a>
+          <a href="menu.html" class="desktop-nav-link">Menu</a>
+          <a href="orders.html" class="desktop-nav-link">Pesanan</a>
+          <a href="profile.html" class="desktop-nav-link active">Profil</a>
+        </nav>
+        <div class="desktop-header-actions">
+          <a href="cart.html" class="cart-icon-btn">
+            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Header Navigation -->
+    <header class="app-header hide-on-desktop">
       <h1 class="header-title">Profil Saya</h1>
       <a href="home.html" class="icon-btn">🏠</a>
     </header>
@@ -20,44 +41,46 @@
     <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px;">
       
       <!-- Profile Info Header Card -->
-      <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-pink), #ff4081); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900;">
+      <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 24px; background: linear-gradient(135deg, #ffffff, #f8fafc); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+        <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-pink), #ff4081); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 900; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);">
           👤
         </div>
         <div>
-          <h3 id="profName" style="font-size: 1.1rem; font-weight: 800;">Tamu / Guest</h3>
-          <p id="profEmail" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">Belum login</p>
-          <span id="profRoleBadge" class="badge badge-dinein" style="font-size: 0.7rem; margin-top: 6px;">USER</span>
+          <h3 id="profName" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0;">Tamu / Guest</h3>
+          <p id="profEmail" style="font-size: 0.85rem; color: var(--text-secondary); margin: 3px 0 0 0;">Belum login</p>
+          <span id="profRoleBadge" class="badge badge-dinein" style="font-size: 0.7rem; margin-top: 6px; display: inline-block;">USER</span>
         </div>
       </div>
 
       <!-- Quick Action Navigation Menu -->
-      <div class="card" style="display: flex; flex-direction: column; gap: 4px; padding: 8px 16px;">
-        <a href="orders.html" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.9rem;">
-          <span>📜 Riwayat Pesanan Makanan</span>
-          <span>→</span>
+      <div class="card" style="display: flex; flex-direction: column; padding: 8px 18px; border-radius: var(--radius-md);">
+        <a href="orders.html" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.925rem; color: var(--text-primary); text-decoration: none;">
+          <span style="display: flex; align-items: center; gap: 10px;"><span>📜</span> Riwayat Pesanan Makanan</span>
+          <span style="color: var(--text-muted);">→</span>
         </a>
-        <a href="reservation.html" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.9rem;">
-          <span>📅 Reservasi Meja Restoran</span>
-          <span>→</span>
+        <a href="reservation.html" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.925rem; color: var(--text-primary); text-decoration: none;">
+          <span style="display: flex; align-items: center; gap: 10px;"><span>📅</span> Reservasi Meja Restoran</span>
+          <span style="color: var(--text-muted);">→</span>
         </a>
-        <a href="../login.html" id="authLink" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; font-weight: 600; font-size: 0.9rem; color: var(--primary-pink);">
-          <span>🔑 Login / Switch Akun</span>
+        <a href="../login.html" id="authLink" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; font-weight: 600; font-size: 0.925rem; color: var(--primary-pink); text-decoration: none;">
+          <span style="display: flex; align-items: center; gap: 10px;"><span>🔑</span> Login / Switch Akun</span>
           <span>→</span>
         </a>
       </div>
 
       <!-- Active Reservations Section -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">📌 Reservasi Meja Aktif</h4>
-        <div id="userReservationsList" style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="card" style="padding: 20px; border-radius: var(--radius-md);">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <span>📌</span> Reservasi Meja Aktif
+        </h4>
+        <div id="userReservationsList" style="display: flex; flex-direction: column; gap: 10px;">
           <!-- JS Rendered Reservations -->
         </div>
       </div>
 
       <!-- Logout Button (Shown when logged in) -->
       <div id="logoutSection" style="display: none;">
-        <button onclick="AuthModule.logout()" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2;">
+        <button onclick="AuthModule.logout()" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2; width: 100%; font-weight: 700; border-radius: var(--radius-md); padding: 12px;">
           🚪 Keluar Akun (Logout)
         </button>
       </div>

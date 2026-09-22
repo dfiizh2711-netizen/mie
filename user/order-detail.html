@@ -11,8 +11,29 @@
 
   <div class="user-container">
     
-    <!-- Header Navigation -->
-    <header class="app-header">
+    <!-- Desktop Header Navigation -->
+    <header class="desktop-nav-header">
+      <div class="desktop-nav-container">
+        <a href="home.html" class="desktop-logo">
+          <span class="logo-badge">GACOAN</span>
+          <span class="logo-text">Mie Gacoan</span>
+        </a>
+        <nav class="desktop-nav-links">
+          <a href="home.html" class="desktop-nav-link">Beranda</a>
+          <a href="menu.html" class="desktop-nav-link">Menu</a>
+          <a href="orders.html" class="desktop-nav-link active">Pesanan</a>
+          <a href="profile.html" class="desktop-nav-link">Profil</a>
+        </nav>
+        <div class="desktop-header-actions">
+          <a href="cart.html" class="cart-icon-btn">
+            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Header Navigation -->
+    <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
         <a href="orders.html" class="icon-btn">←</a>
         <h1 class="header-title">Detail & Lacak Pesanan</h1>
@@ -22,32 +43,38 @@
     <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px;">
       
       <!-- Queue Number Banner Card -->
-      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; text-align: center; padding: 24px; border: none;">
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; text-align: center; padding: 24px; border: none; border-radius: var(--radius-lg); box-shadow: var(--shadow-md);">
         <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700;">Nomor Antrean Anda</span>
-        <h1 id="detQueueNum" class="kds-queue-big" style="font-size: 3.5rem; margin: 6px 0; color: var(--primary-pink);">-</h1>
-        <div style="display: flex; justify-content: center; gap: 8px;" id="detBadges"></div>
+        <h1 id="detQueueNum" class="kds-queue-big" style="font-size: 3.5rem; margin: 6px 0; color: var(--primary-pink); font-family: var(--font-heading); font-weight: 900;">-</h1>
+        <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;" id="detBadges"></div>
       </div>
 
       <!-- Realtime Status Progress Stepper -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 16px;">🔄 Status Realtime Pesanan</h4>
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 18px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <span>🔄</span> Status Realtime Pesanan
+        </h4>
         <div id="statusStepper" style="display: flex; justify-content: space-between; position: relative;">
           <!-- JS Rendered Progress Steps -->
         </div>
       </div>
 
       <!-- Item Breakdown Table Card -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">🍽️ Rincian Item Pesanan</h4>
-        <div id="detItemsList" style="display: flex; flex-direction: column; gap: 10px;">
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <span>🍽️</span> Rincian Item Pesanan
+        </h4>
+        <div id="detItemsList" style="display: flex; flex-direction: column; gap: 12px;">
           <!-- JS Rendered Items -->
         </div>
       </div>
 
       <!-- Financial Calculations Breakdown Card -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">🧾 Struk Transaksi</h4>
-        <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--text-secondary);">
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+          <span>🧾</span> Struk Transaksi
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.875rem; color: var(--text-secondary);">
           <div style="display: flex; justify-content: space-between;">
             <span>Subtotal</span>
             <span id="detSubtotal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
@@ -64,7 +91,7 @@
             <span>Service Charge (5%)</span>
             <span id="detService" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
           </div>
-          <div style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 4px; display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">
+          <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 800; color: var(--text-primary);">
             <span>Total Akhir</span>
             <span id="detGrandTotal" style="color: var(--primary-pink);">Rp 0</span>
           </div>
@@ -122,13 +149,13 @@
 
       // Render Items
       document.getElementById("detItemsList").innerHTML = (order.order_items || []).map(item => `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.875rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
           <div>
-            <strong>${item.quantity}x ${item.product_name}</strong>
-            <div style="font-size: 0.75rem; color: var(--text-secondary);">${Utils.formatRupiah(item.price_snapshot)} / item</div>
-            ${item.notes ? `<div style="font-size: 0.75rem; color: var(--primary-pink); font-style: italic;">Note: ${item.notes}</div>` : ''}
+            <strong style="color: var(--text-primary); font-weight: 700;">${item.quantity}x ${item.product_name}</strong>
+            <div style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 2px;">${Utils.formatRupiah(item.price_snapshot)} / item</div>
+            ${item.notes ? `<div style="font-size: 0.775rem; color: var(--primary-pink); font-style: italic; margin-top: 2px;">Note: ${item.notes}</div>` : ''}
           </div>
-          <strong style="font-size: 0.9rem;">${Utils.formatRupiah(item.subtotal)}</strong>
+          <strong style="font-size: 0.95rem; color: var(--text-primary); font-weight: 700;">${Utils.formatRupiah(item.subtotal)}</strong>
         </div>
       `).join("");
 
@@ -158,11 +185,11 @@
         const isCurrent = idx === activeIdx;
 
         return `
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; text-align: center;">
-            <div style="width: 28px; height: 28px; border-radius: 50%; background: ${isDone ? 'var(--primary-pink)' : '#e2e8f0'}; color: ${isDone ? 'white' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; border: ${isCurrent ? '3px solid #fce4ec' : 'none'};">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; text-align: center;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${isDone ? 'var(--primary-pink)' : '#e2e8f0'}; color: ${isDone ? 'white' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; border: ${isCurrent ? '4px solid #fce4ec' : 'none'}; box-shadow: ${isDone ? '0 2px 8px rgba(233, 30, 99, 0.3)' : 'none'};">
               ${isDone ? '✓' : idx + 1}
             </div>
-            <span style="font-size: 0.65rem; font-weight: ${isDone ? '700' : '500'}; color: ${isDone ? 'var(--text-primary)' : 'var(--text-muted)'};">${s.label}</span>
+            <span style="font-size: 0.725rem; font-weight: ${isDone ? '700' : '500'}; color: ${isDone ? 'var(--text-primary)' : 'var(--text-muted)'};">${s.label}</span>
           </div>
         `;
       }).join("");

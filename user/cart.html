@@ -2,62 +2,71 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Keranjang Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <div class="user-container">
+  <div class="user-container user-container-narrow">
     
     <!-- Header Navigation -->
     <header class="app-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="menu.html" class="icon-btn">←</a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="menu.html" class="icon-btn" title="Kembali">←</a>
         <h1 class="header-title">Keranjang Saya</h1>
       </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link">Riwayat Pesanan</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
+
       <button onclick="clearCartConfirm()" class="icon-btn" title="Kosongkan Keranjang" style="color: var(--accent-red);">🗑️</button>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 120px;">
+    <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 120px; flex: 1;">
       
       <!-- Cart Items List Container -->
-      <div id="cartItemsList" style="display: flex; flex-direction: column; gap: 12px;">
+      <div id="cartItemsList" style="display: flex; flex-direction: column; gap: 14px;">
         <!-- JS Rendered Items -->
       </div>
 
       <!-- Promo Code Voucher Section -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 8px;">🎟️ Kode Promo & Voucher</h4>
-        <div style="display: flex; gap: 8px;">
-          <input type="text" id="promoInput" placeholder="Masukkan kode (cth: GACOAN10)" class="card" style="flex: 1; padding: 10px 14px; text-transform: uppercase; font-size: 0.85rem;" />
-          <button onclick="applyPromoCode()" class="btn btn-primary" style="width: auto; padding: 10px 16px; font-size: 0.85rem;">Pakai</button>
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);">🎟️ Kode Promo & Voucher</h4>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="promoInput" placeholder="Masukkan kode (cth: GACOAN10)" class="form-input" style="text-transform: uppercase; flex: 1;" />
+          <button onclick="applyPromoCode()" class="btn btn-primary" style="width: auto; padding: 10px 20px;">Pakai</button>
         </div>
-        <div id="activePromoBadge" style="margin-top: 8px;"></div>
+        <div id="activePromoBadge" style="margin-top: 10px;"></div>
       </div>
 
       <!-- Payment Summary Calculation Card -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">Rincian Pembayaran</h4>
-        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; color: var(--text-secondary);">
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 14px; color: var(--text-primary);">Rincian Pembayaran</h4>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 0.88rem; color: var(--text-secondary);">
           <div style="display: flex; justify-content: space-between;">
             <span>Subtotal Menu</span>
-            <span id="subtotalVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+            <span id="subtotalVal" style="color: var(--text-primary); font-weight: 700;">Rp 0</span>
           </div>
           <div style="display: flex; justify-content: space-between; color: var(--accent-green);">
             <span>Diskon Promo</span>
-            <span id="discountVal" style="font-weight: 600;">-Rp 0</span>
+            <span id="discountVal" style="font-weight: 700;">-Rp 0</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span>Pajak Restoran PB1 (10%)</span>
-            <span id="taxVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+            <span id="taxVal" style="color: var(--text-primary); font-weight: 700;">Rp 0</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
             <span>Service Charge (5%)</span>
-            <span id="serviceVal" style="color: var(--text-primary); font-weight: 600;">Rp 0</span>
+            <span id="serviceVal" style="color: var(--text-primary); font-weight: 700;">Rp 0</span>
           </div>
-          <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; margin-top: 4px; display: flex; justify-content: space-between; font-size: 1rem; font-weight: 800; color: var(--text-primary);">
+          <div style="border-top: 1px dashed var(--border-light); padding-top: 12px; margin-top: 6px; display: flex; justify-content: space-between; font-size: 1.05rem; font-weight: 900; color: var(--text-primary);">
             <span>Total Pembayaran</span>
             <span id="grandTotalVal" style="color: var(--primary-pink);">Rp 0</span>
           </div>
@@ -67,8 +76,8 @@
     </main>
 
     <!-- Bottom Checkout Action Bar -->
-    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); padding: 12px 16px; z-index: 80;">
-      <a href="checkout.html" id="btnCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1rem;">
+    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--container-content-max); background: white; border-top: 1px solid var(--border-light); padding: 14px 20px; z-index: 80; box-shadow: 0 -4px 20px rgba(15,23,42,0.06);">
+      <a href="checkout.html" id="btnCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1.05rem; width: 100%;">
         Lanjut ke Checkout →
       </a>
     </div>
@@ -92,11 +101,11 @@
 
       if (cart.items.length === 0) {
         container.innerHTML = `
-          <div class="empty-state">
-            <span style="font-size: 3.5rem;">🛒</span>
-            <div class="empty-state-title">Keranjang Masih Kosong</div>
-            <p>Pilih menu lezat Mie Gacoan favoritmu sekarang.</p>
-            <a href="menu.html" class="btn btn-primary" style="width: auto; margin-top: 16px;">Lihat Menu</a>
+          <div style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+            <span style="font-size: 4rem; display: block; margin-bottom: 12px;">🛒</span>
+            <strong style="font-size: 1.2rem; color: var(--text-primary); display: block;">Keranjang Masih Kosong</strong>
+            <p style="font-size: 0.88rem; margin-top: 6px;">Pilih menu lezat Mie Gacoan favoritmu sekarang.</p>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 20px auto 0 auto; padding: 12px 24px;">Lihat Menu Catalog →</a>
           </div>
         `;
         checkoutBtn.style.pointerEvents = "none";
@@ -109,17 +118,17 @@
       checkoutBtn.style.opacity = "1";
 
       container.innerHTML = cart.items.map(item => `
-        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 12px;">
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 16px;">
           <div>
-            <h4 style="font-size: 0.95rem; font-weight: 800;">${item.product_name}</h4>
-            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-pink); display: block; margin-top: 2px;">${Utils.formatRupiah(item.price_snapshot)}</span>
-            ${item.notes ? `<span style="font-size: 0.75rem; color: var(--text-secondary); font-style: italic;">Note: ${item.notes}</span>` : ''}
+            <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-primary);">${item.product_name}</h4>
+            <span style="font-size: 0.9rem; font-weight: 900; color: var(--primary-pink); display: block; margin-top: 4px;">${Utils.formatRupiah(item.price_snapshot)}</span>
+            ${item.notes ? `<span style="font-size: 0.78rem; color: var(--text-secondary); font-style: italic; display: block; margin-top: 2px;">Note: ${item.notes}</span>` : ''}
           </div>
 
-          <div class="qty-ctrl">
-            <button onclick="updateQty('${item.item_key}', -1)" class="qty-btn">−</button>
-            <span class="qty-val">${item.quantity}</span>
-            <button onclick="updateQty('${item.item_key}', 1)" class="qty-btn">+</button>
+          <div class="qty-ctrl" style="display: flex; align-items: center; background: var(--bg-subtle-light); padding: 4px; border-radius: var(--radius-sm);">
+            <button onclick="updateQty('${item.item_key}', -1)" class="btn btn-secondary btn-sm" style="width: 32px; height: 32px; padding: 0;">−</button>
+            <span style="font-weight: 900; padding: 0 12px; font-size: 0.95rem;">${item.quantity}</span>
+            <button onclick="updateQty('${item.item_key}', 1)" class="btn btn-secondary btn-sm" style="width: 32px; height: 32px; padding: 0;">+</button>
           </div>
         </div>
       `).join("");
@@ -171,9 +180,9 @@
       const promoBadge = document.getElementById("activePromoBadge");
       if (cart.promo) {
         promoBadge.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; background: #d1fae5; color: #047857; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 700;">
+          <div style="display: flex; align-items: center; justify-content: space-between; background: #d1fae5; color: #047857; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700;">
             <span>Voucher Aktif: ${cart.promo.code} (${cart.promo.name})</span>
-            <button onclick="CartStore.removePromo();" style="background: none; color: #b91c1c; font-weight: 800; font-size: 0.9rem;">✕</button>
+            <button onclick="CartStore.removePromo();" style="background: none; border: none; color: #b91c1c; font-weight: 800; font-size: 1rem; cursor: pointer;">✕</button>
           </div>
         `;
       } else {

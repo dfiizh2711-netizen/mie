@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pembayaran Midtrans - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,49 +11,57 @@
 </head>
 <body>
 
-  <div class="user-container">
+  <div class="user-container user-container-narrow">
     
     <!-- Header Navigation -->
     <header class="app-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
         <a href="orders.html" class="icon-btn">←</a>
         <h1 class="header-title">Pembayaran Midtrans</h1>
       </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link">Riwayat Pesanan</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+    <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; flex: 1;">
       
       <!-- Order Summary Status Box -->
-      <div class="card" style="text-align: center; padding: 24px;">
-        <div id="paymentStatusBadge" class="badge badge-pending" style="margin-bottom: 12px; font-size: 0.85rem; padding: 6px 14px;">
+      <div class="card" style="text-align: center; padding: 28px 20px;">
+        <div id="paymentStatusBadge" class="badge badge-pending" style="margin-bottom: 14px; font-size: 0.85rem; padding: 6px 16px;">
           Menunggu Pembayaran
         </div>
 
         <span style="font-size: 0.85rem; color: var(--text-secondary); display: block;">Total Tagihan Pesanan</span>
-        <h2 id="payGrandTotal" style="font-size: 2rem; font-weight: 900; color: var(--primary-pink); margin: 4px 0 12px 0;">Rp 0</h2>
+        <h2 id="payGrandTotal" style="font-size: 2.2rem; font-weight: 900; color: var(--primary-pink); margin: 6px 0 12px 0;">Rp 0</h2>
         
-        <p id="payOrderNum" style="font-size: 0.85rem; color: var(--text-muted); font-family: monospace;"></p>
+        <p id="payOrderNum" style="font-size: 0.88rem; color: var(--text-muted); font-family: monospace;"></p>
       </div>
 
       <!-- Queue Display Container (Visible after payment) -->
-      <div id="queueCard" class="card" style="display: none; background: linear-gradient(135deg, #10b981, #047857); color: white; text-align: center; padding: 24px;">
-        <span style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; font-weight: 700;">Nomor Antrean Anda</span>
-        <h1 id="queueNumDisplay" class="kds-queue-big" style="font-size: 4rem; margin: 8px 0; color: white;">-</h1>
-        <p style="font-size: 0.85rem; opacity: 0.9;">Tunjukkan nomor antrean ini saat mengambil pesanan di kasir / konter.</p>
+      <div id="queueCard" class="card" style="display: none; background: linear-gradient(135deg, #10b981, #047857); color: white; text-align: center; padding: 28px 20px; border: none;">
+        <span style="font-size: 0.88rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.95; font-weight: 800;">Nomor Antrean Anda</span>
+        <h1 id="queueNumDisplay" style="font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: white; line-height: 1;">-</h1>
+        <p style="font-size: 0.88rem; opacity: 0.95; line-height: 1.4;">Tunjukkan nomor antrean ini saat mengambil pesanan di kasir / konter.</p>
       </div>
 
       <!-- Midtrans Pay Button Card -->
-      <div id="payActionCard" class="card">
-        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Pilih Metode Pembayaran</h4>
-        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 16px;">Mendukung QRIS (Gopay, ShopeePay, OVO, Dana), Transfer Bank, dan Kartu Kredit melalui Midtrans Snap.</p>
+      <div id="payActionCard" class="card" style="padding: 24px;">
+        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 8px; color: var(--text-primary);">Pilih Metode Pembayaran</h4>
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.4;">Mendukung QRIS (GoPay, ShopeePay, OVO, Dana), Transfer Bank, dan Kartu Kredit melalui Midtrans Snap.</p>
         
-        <button id="btnOpenSnap" onclick="triggerMidtransSnap()" class="btn btn-primary" style="padding: 16px; font-size: 1.05rem;">
+        <button id="btnOpenSnap" onclick="triggerMidtransSnap()" class="btn btn-primary" style="padding: 16px; font-size: 1.05rem; width: 100%;">
           💳 Bayar Sekarang via Midtrans Snap
         </button>
 
         <!-- Sandbox Simulation Button for Testing without Live Merchant Key -->
-        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border-color); text-align: center;">
-          <button onclick="simulateSuccessPayment()" class="btn btn-secondary" style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3;">
+        <div style="margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--border-light); text-align: center;">
+          <button onclick="simulateSuccessPayment()" class="btn btn-secondary" style="font-size: 0.85rem; background: #e0e7ff; color: #3730a3; width: 100%; border: none;">
             🧪 Simulasikan Pembayaran Berhasil (Testing Mode)
           </button>
         </div>
@@ -65,26 +73,26 @@
 
   <!-- Modal QRIS Payment Popup -->
   <div id="qrisModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
-    <div class="card" style="max-width: 380px; width: 100%; background: #ffffff; color: #0f172a; text-align: center; padding: 24px; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
+    <div class="card" style="max-width: 400px; width: 100%; background: #ffffff; color: #0f172a; text-align: center; padding: 28px; border-radius: 20px; box-shadow: var(--shadow-xl);">
       
       <!-- QRIS Banner Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; margin-bottom: 18px;">
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-weight: 900; font-size: 1.25rem; color: #ee2737; letter-spacing: 1px;">QRIS</span>
-          <span style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; font-weight: 700; padding: 2px 8px; border-radius: 9999px;">Pembayaran Instant</span>
+          <span style="font-weight: 900; font-size: 1.3rem; color: #ee2737; letter-spacing: 1px;">QRIS</span>
+          <span style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">Pembayaran Instant</span>
         </div>
         <button onclick="closeQrisModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #64748b; padding: 0 4px;">✕</button>
       </div>
 
-      <p style="font-size: 0.85rem; color: #475569; margin-bottom: 4px;">Scan Kode QRIS di bawah ini untuk membayar</p>
-      <h3 id="qrisGrandTotal" style="font-size: 1.8rem; font-weight: 900; color: var(--primary-pink); margin-bottom: 14px;">Rp 0</h3>
+      <p style="font-size: 0.88rem; color: #475569; margin-bottom: 4px;">Scan Kode QRIS di bawah ini untuk membayar</p>
+      <h3 id="qrisGrandTotal" style="font-size: 1.9rem; font-weight: 900; color: var(--primary-pink); margin-bottom: 16px;">Rp 0</h3>
 
       <!-- Dynamic QR Code Image Box -->
-      <div style="background: #f8fafc; padding: 16px; border-radius: 16px; border: 2px dashed #cbd5e1; display: inline-block; margin-bottom: 16px;">
+      <div style="background: #f8fafc; padding: 16px; border-radius: 16px; border: 2px dashed #cbd5e1; display: inline-block; margin-bottom: 18px;">
         <img id="qrisQrImage" src="" alt="QRIS Code Barcode" style="width: 220px; height: 220px; display: block; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" />
       </div>
 
-      <div style="background: #f1f5f9; padding: 10px 14px; border-radius: 10px; font-size: 0.78rem; color: #334155; text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
+      <div style="background: #f1f5f9; padding: 12px 16px; border-radius: 10px; font-size: 0.8rem; color: #334155; text-align: left; margin-bottom: 20px; display: flex; flex-direction: column; gap: 4px;">
         <div style="display: flex; justify-content: space-between;">
           <span>Merchant:</span> <strong style="color: #0f172a;">Mie Gacoan Official</strong>
         </div>
@@ -97,7 +105,7 @@
         ✓ Konfirmasi Pembayaran QRIS Selesai
       </button>
       
-      <button onclick="closeQrisModal()" style="margin-top: 12px; background: none; border: none; color: #64748b; font-size: 0.85rem; cursor: pointer; width: 100%; font-weight: 600;">
+      <button onclick="closeQrisModal()" style="margin-top: 12px; background: none; border: none; color: #64748b; font-size: 0.88rem; cursor: pointer; width: 100%; font-weight: 600;">
         Batal / Kembali
       </button>
 

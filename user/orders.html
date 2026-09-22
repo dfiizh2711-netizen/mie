@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Riwayat Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,17 +13,28 @@
     
     <!-- Header Navigation -->
     <header class="app-header">
-      <h1 class="header-title">Riwayat Pesanan Saya</h1>
-      <a href="home.html" class="icon-btn">🏠</a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="home.html" class="icon-btn">←</a>
+        <h1 class="header-title">Riwayat Pesanan Saya</h1>
+      </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link active">Riwayat Pesanan</a>
+        <a href="reservation.html" class="desktop-nav-link">Reservasi Meja</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 90px;">
-      <div id="ordersContainer" style="display: flex; flex-direction: column; gap: 12px;">
+    <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 100px; flex: 1;">
+      <div id="ordersContainer" style="display: flex; flex-direction: column; gap: 14px;">
         <!-- JS Rendered Orders -->
       </div>
     </main>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar (Mobile View) -->
     <nav class="bottom-nav">
       <a href="home.html" class="nav-item">
         <span class="icon">🏠</span>Beranda
@@ -66,11 +77,11 @@
 
       if (error || !orders || orders.length === 0) {
         container.innerHTML = `
-          <div class="empty-state">
-            <span style="font-size: 3.5rem;">📜</span>
-            <div class="empty-state-title">Belum Ada Pesanan</div>
-            <p>Pesanan yang Anda buat akan muncul di sini.</p>
-            <a href="menu.html" class="btn btn-primary" style="width: auto; margin-top: 16px;">Pesan Sekarang</a>
+          <div style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+            <span style="font-size: 3.5rem; display: block; margin-bottom: 12px;">📜</span>
+            <strong style="font-size: 1.1rem; color: var(--text-primary); display: block;">Belum Ada Pesanan</strong>
+            <p style="font-size: 0.85rem; margin-top: 4px;">Pesanan yang Anda buat akan muncul di sini.</p>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 18px auto 0 auto; padding: 12px 24px;">Pesan Sekarang →</a>
           </div>
         `;
         return;
@@ -79,11 +90,11 @@
       container.innerHTML = orders.map(o => {
         const badgeInfo = Utils.getOrderStatusBadge(o.order_status);
         return `
-          <a href="order-detail.html?id=${o.id}" class="card" style="display: block;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+          <a href="order-detail.html?id=${o.id}" class="card" style="display: block; text-decoration: none; padding: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
               <div>
-                <span style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">#${o.order_number}</span>
-                <div style="display: flex; gap: 6px; align-items: center; margin-top: 2px;">
+                <span style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted); font-weight: 700;">#${o.order_number}</span>
+                <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
                   ${Utils.getOrderTypeBadge(o.order_type)}
                   ${o.tables?.table_number ? `<span class="badge badge-dinein">${o.tables.table_number}</span>` : ''}
                 </div>
@@ -91,12 +102,12 @@
               <span class="badge ${badgeInfo.class}">${badgeInfo.label}</span>
             </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 12px; border-top: 1px dashed var(--border-color); padding-top: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 14px; border-top: 1px dashed var(--border-light); padding-top: 12px;">
               <div>
-                <span style="font-size: 0.75rem; color: var(--text-secondary); display: block;">${Utils.formatDateTime(o.created_at)}</span>
-                ${o.queue_number ? `<span style="font-weight: 900; font-size: 1.1rem; color: var(--primary-pink);">Antrean: ${o.queue_number}</span>` : ''}
+                <span style="font-size: 0.78rem; color: var(--text-secondary); display: block;">${Utils.formatDateTime(o.created_at)}</span>
+                ${o.queue_number ? `<span style="font-weight: 900; font-size: 1.15rem; color: var(--primary-pink);">Antrean: ${o.queue_number}</span>` : ''}
               </div>
-              <strong style="font-size: 1.05rem; color: var(--text-primary);">${Utils.formatRupiah(o.grand_total)}</strong>
+              <strong style="font-size: 1.1rem; color: var(--text-primary); font-weight: 900;">${Utils.formatRupiah(o.grand_total)}</strong>
             </div>
           </a>
         `;

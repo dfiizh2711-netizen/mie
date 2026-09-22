@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mie Gacoan - Beranda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mie Gacoan - Beranda Pelanggan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -13,96 +13,115 @@
     
     <!-- Top Header Navigation -->
     <header class="app-header">
-      <div class="brand-logo">
+      <a href="home.html" class="brand-logo">
         <span class="brand-badge">ME</span>
         <span style="color: var(--primary-pink);">GacoaN</span>
-      </div>
+      </a>
+
+      <!-- Desktop Header Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link active">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link">Riwayat Pesanan</a>
+        <a href="reservation.html" class="desktop-nav-link">Reservasi Meja</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
 
       <div style="display: flex; align-items: center; gap: 8px;">
+        <a href="cart.html" class="icon-btn" title="Keranjang Belanja" style="position: relative;">
+          🛒
+          <span id="headerCartCount" class="badge" style="position: absolute; top: -2px; right: -2px; background: var(--primary-pink); color: white; padding: 2px 6px; font-size: 0.65rem; border-radius: 9999px; display: none;">0</span>
+        </a>
         <a href="reservation.html" class="icon-btn" title="Reservasi Meja">📅</a>
         <a href="profile.html" class="icon-btn" title="Profil">👤</a>
       </div>
     </header>
 
     <!-- Main Scrollable Body Content -->
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px;">
+    <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 100px;">
       
       <!-- Hero Banner Image Section -->
-      <div style="width: 100%; border-radius: var(--radius-md); overflow: hidden; position: relative; box-shadow: var(--shadow-md);">
-        <img src="../asset/hero-banner.png" alt="Mie Gacoan Hero Banner" style="width: 100%; height: 180px; object-fit: cover; display: block;" onerror="this.src='../asset/Hero.png'" />
-        <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(15,23,42,0.85) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; color: white;">
-          <span class="badge badge-ready" style="font-size: 0.7rem; margin-bottom: 6px; width: fit-content;">● Buka Hari Ini • Sidoarjo Pabean</span>
-          <h2 style="font-size: 1.35rem; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Mie Gacoan Sidoarjo Pabean</h2>
-          <p style="font-size: 0.8rem; color: #cbd5e1; text-shadow: 0 1px 2px rgba(0,0,0,0.6);">Solusi Santap Mie Pedas No. 1 di Indonesia</p>
+      <div class="hero-banner-wrap" style="width: 100%;">
+        <div style="width: 100%; border-radius: var(--radius-lg); overflow: hidden; position: relative; box-shadow: var(--shadow-md);">
+          <img src="../asset/hero-banner.png" alt="Mie Gacoan Hero Banner" style="width: 100%; height: 220px; object-fit: cover; display: block;" onerror="Utils.handleImageError(this, '../asset/Hero.png')" />
+          <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,23,42,0.2) 0%, rgba(15,23,42,0.88) 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; color: white;">
+            <span class="badge badge-ready" style="font-size: 0.72rem; margin-bottom: 6px; width: fit-content;">● Buka Hari Ini • Sidoarjo Pabean</span>
+            <h2 style="font-size: 1.5rem; font-weight: 900; letter-spacing: -0.02em; text-shadow: 0 2px 4px rgba(0,0,0,0.6);">Mie Gacoan Sidoarjo Pabean</h2>
+            <p style="font-size: 0.85rem; color: #cbd5e1; text-shadow: 0 1px 2px rgba(0,0,0,0.6);">Solusi Santap Mie Pedas No. 1 di Indonesia</p>
+          </div>
         </div>
       </div>
 
       <!-- Restaurant Info Header Card -->
-      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 16px;">
-        <div style="display: flex; gap: 10px; font-size: 0.8rem; color: #cbd5e1; justify-content: space-between;">
-          <span>⚡ Delivery Cepat</span> • <span>💳 Midtrans / QRIS / Cash</span> • <span>⭐ 4.9 (2.4k+)</span>
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 16px 20px;">
+        <div style="display: flex; gap: 12px; font-size: 0.85rem; color: #cbd5e1; justify-content: space-between; flex-wrap: wrap;">
+          <span>⚡ Delivery Cepat</span>
+          <span>•</span>
+          <span>💳 Midtrans / QRIS / Cash</span>
+          <span>•</span>
+          <span>⭐ 4.9 (2.4k+ Ulasan)</span>
         </div>
       </div>
 
       <!-- Order Type Switcher & Table Selection -->
-      <div class="card">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-          <span style="font-weight: 700; font-size: 0.95rem;">Tipe Pemesanan:</span>
-          <div style="display: flex; background: #f1f5f9; padding: 4px; border-radius: var(--radius-full);">
-            <button id="btnDineIn" onclick="setOrderType('DINE_IN')" class="btn" style="padding: 6px 16px; font-size: 0.8rem; border-radius: var(--radius-full); width: auto;">Dine In</button>
-            <button id="btnTakeAway" onclick="setOrderType('TAKE_AWAY')" class="btn" style="padding: 6px 16px; font-size: 0.8rem; border-radius: var(--radius-full); width: auto;">Take Away</button>
+      <div class="card" style="padding: 20px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+          <span style="font-weight: 800; font-size: 1rem; color: var(--text-primary);">Tipe Pemesanan:</span>
+          <div style="display: flex; background: var(--bg-subtle-light); padding: 4px; border-radius: var(--radius-full);">
+            <button id="btnDineIn" onclick="setOrderType('DINE_IN')" class="btn" style="padding: 6px 18px; font-size: 0.85rem; border-radius: var(--radius-full); width: auto;">Dine In</button>
+            <button id="btnTakeAway" onclick="setOrderType('TAKE_AWAY')" class="btn" style="padding: 6px 18px; font-size: 0.85rem; border-radius: var(--radius-full); width: auto;">Take Away</button>
           </div>
         </div>
 
         <!-- Dine In Table Selection Picker -->
-        <div id="tablePickerSection" style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 12px; border-radius: var(--radius-sm); border: 1px dashed #cbd5e1;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">🪑</span>
+        <div id="tablePickerSection" style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-light); padding: 14px; border-radius: var(--radius-md); border: 1px dashed #cbd5e1;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.4rem;">🪑</span>
             <div>
               <span style="font-size: 0.8rem; color: var(--text-secondary); display: block;">Nomor Meja Dine In</span>
-              <strong id="selectedTableText" style="font-size: 0.95rem; color: var(--primary-pink);">Belum Pilih Meja</strong>
+              <strong id="selectedTableText" style="font-size: 1rem; color: var(--primary-pink);">Belum Pilih Meja</strong>
             </div>
           </div>
-          <button onclick="openTableModal()" class="btn btn-secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;">Pilih Meja</button>
+          <button onclick="openTableModal()" class="btn btn-secondary" style="width: auto; padding: 8px 14px; font-size: 0.82rem;">Pilih Meja</button>
         </div>
 
         <!-- Take Away Queue Note -->
-        <div id="takeAwaySection" style="display: none; background: #fef3c7; padding: 12px; border-radius: var(--radius-sm); color: #92400e; font-size: 0.85rem;">
+        <div id="takeAwaySection" style="display: none; background: #fef3c7; padding: 14px; border-radius: var(--radius-md); color: #92400e; font-size: 0.88rem; line-height: 1.4;">
           📦 <strong>Take Away / Bungkus:</strong> Nomor antrean (T001, T002...) akan dibuat otomatis setelah checkout.
         </div>
       </div>
 
       <!-- Active Promotions Banner -->
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <h3 style="font-size: 1rem; font-weight: 700;">🔥 Promo Hari Ini</h3>
-          <span style="font-size: 0.8rem; color: var(--primary-pink); font-weight: 600;">Lihat Semua</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary);">🔥 Promo Hari Ini</h3>
+          <span style="font-size: 0.82rem; color: var(--primary-pink); font-weight: 700;">Lihat Semua</span>
         </div>
-        <div id="promoList" style="display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none;">
+        <div id="promoList" style="display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none;">
           <!-- JS Rendered Promos -->
         </div>
       </div>
 
       <!-- Categories Section -->
       <div>
-        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 12px;">Kategori Menu</h3>
-        <div id="categoryGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 14px; color: var(--text-primary);">Kategori Menu</h3>
+        <div id="categoryGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px;">
           <!-- JS Rendered Categories -->
         </div>
       </div>
 
       <!-- Quick Reservation Banner -->
-      <div class="card" style="background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 1px solid #f48fb1; display: flex; align-items: center; justify-content: space-between;">
+      <div class="card" style="background: linear-gradient(135deg, #fce4ec, #f8bbd0); border: 1px solid #f48fb1; display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; flex-wrap: wrap; gap: 12px;">
         <div>
-          <h4 style="color: #880e4f; font-size: 1rem;">Ingin Reservasi Meja?</h4>
-          <p style="font-size: 0.8rem; color: #ad1457;">Booking tempat untuk acara atau rombongan</p>
+          <h4 style="color: #880e4f; font-size: 1.05rem; font-weight: 800;">Ingin Reservasi Meja?</h4>
+          <p style="font-size: 0.85rem; color: #ad1457; margin-top: 2px;">Booking tempat untuk acara khusus atau rombongan</p>
         </div>
-        <a href="reservation.html" class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">Booking</a>
+        <a href="reservation.html" class="btn btn-primary" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">Booking Meja →</a>
       </div>
 
     </main>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar (Mobile View) -->
     <nav class="bottom-nav">
       <a href="home.html" class="nav-item active">
         <span class="icon">🏠</span>Beranda
@@ -122,16 +141,16 @@
 
   <!-- Table Selection Modal -->
   <div id="tableModal" class="modal-backdrop" onclick="closeTableModal()">
-    <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-sheet" style="max-width: 500px; margin: 0 auto; border-radius: var(--radius-lg);" onclick="event.stopPropagation()">
       <div class="modal-drag-handle"></div>
-      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 12px;">Pilih Meja Dine In</h3>
-      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">Silakan pilih nomor meja tempat Anda duduk saat ini</p>
+      <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">Pilih Meja Dine In</h3>
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 18px;">Silakan pilih nomor meja tempat Anda duduk saat ini</p>
       
-      <div id="tableGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 50vh; overflow-y: auto;">
+      <div id="tableGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-height: 50vh; overflow-y: auto;">
         <!-- JS Rendered Tables -->
       </div>
       
-      <button onclick="closeTableModal()" class="btn btn-secondary" style="margin-top: 20px;">Tutup</button>
+      <button onclick="closeTableModal()" class="btn btn-secondary" style="margin-top: 20px; width: 100%;">Tutup</button>
     </div>
   </div>
 
@@ -144,10 +163,21 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       loadCartOrderType();
+      updateHeaderCartCount();
       loadPromotions();
       loadCategories();
       loadTables();
     });
+
+    function updateHeaderCartCount() {
+      const cart = CartStore.getCart();
+      const badge = document.getElementById("headerCartCount");
+      const count = cart.items.reduce((sum, i) => sum + i.quantity, 0);
+      if (count > 0 && badge) {
+        badge.innerText = count;
+        badge.style.display = "inline-block";
+      }
+    }
 
     function loadCartOrderType() {
       const cart = CartStore.getCart();
@@ -204,10 +234,10 @@
       }
 
       container.innerHTML = promos.map(p => `
-        <div class="card" style="min-width: 240px; background: linear-gradient(135deg, #ff9800, #f57c00); color: white; border: none; padding: 14px;">
-          <div style="font-weight: 800; font-size: 0.8rem; background: rgba(255,255,255,0.2); display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px;">KODE: ${p.code}</div>
-          <h4 style="font-size: 0.95rem; font-weight: 800;">${p.name}</h4>
-          <p style="font-size: 0.75rem; opacity: 0.9; margin-top: 4px;">${p.description}</p>
+        <div class="card" style="min-width: 250px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 16px; border-radius: var(--radius-md);">
+          <div style="font-weight: 900; font-size: 0.75rem; background: rgba(255,255,255,0.25); display: inline-block; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;">KODE: ${p.code}</div>
+          <h4 style="font-size: 1rem; font-weight: 800;">${p.name}</h4>
+          <p style="font-size: 0.8rem; opacity: 0.95; margin-top: 4px; line-height: 1.3;">${p.description}</p>
         </div>
       `).join("");
     }
@@ -219,9 +249,9 @@
 
       if (!cats) return;
       container.innerHTML = cats.map(c => `
-        <a href="menu.html?category=${c.slug}" class="card" style="text-align: center; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <span style="font-size: 1.8rem; margin-bottom: 6px;">${getCategoryIcon(c.slug)}</span>
-          <span style="font-weight: 700; font-size: 0.85rem;">${c.name}</span>
+        <a href="menu.html?category=${c.slug}" class="card" style="text-align: center; padding: 16px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; transition: var(--transition-fast);">
+          <span style="font-size: 2rem; margin-bottom: 6px;">${getCategoryIcon(c.slug)}</span>
+          <span style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">${c.name}</span>
         </a>
       `).join("");
     }

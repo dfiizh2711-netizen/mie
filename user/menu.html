@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Daftar Menu - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,35 +13,55 @@
     
     <!-- Top Bar Navigation -->
     <header class="app-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
         <a href="home.html" class="icon-btn" title="Kembali">←</a>
         <h1 class="header-title">Menu Mie Gacoan</h1>
       </div>
-      <a href="cart.html" class="icon-btn" title="Keranjang">🛒</a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link active">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link">Riwayat Pesanan</a>
+        <a href="reservation.html" class="desktop-nav-link">Reservasi Meja</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
+
+      <a href="cart.html" class="icon-btn" title="Keranjang" style="position: relative;">
+        🛒
+        <span id="headerMenuCartBadge" class="badge" style="position: absolute; top: -2px; right: -2px; background: var(--primary-pink); color: white; padding: 2px 6px; font-size: 0.65rem; border-radius: 9999px; display: none;">0</span>
+      </a>
     </header>
 
-    <!-- Search Input Bar -->
-    <div style="padding: 12px 16px; background: white; border-bottom: 1px solid var(--border-color);">
-      <input type="text" id="searchInput" oninput="onSearchInput(this.value)" placeholder="🔍 Cari menu favoritmu (cth: Hompimpa, Udang Keju)..." class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
-    </div>
+    <!-- Search & Filter Controls Container -->
+    <div style="background: white; border-bottom: 1px solid var(--border-light); position: sticky; top: 64px; z-index: var(--z-sticky);">
+      
+      <!-- Search Input Bar -->
+      <div style="padding: 12px 16px;">
+        <input type="text" id="searchInput" oninput="onSearchInput(this.value)" placeholder="🔍 Cari menu favoritmu (cth: Hompimpa, Udang Keju)..." class="form-input" />
+      </div>
 
-    <!-- Category Tabs Bar -->
-    <div style="display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px; background: white; border-bottom: 1px solid var(--border-color); scrollbar-width: none;">
-      <button onclick="filterCategory('all')" id="catTab-all" class="btn btn-primary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">Semua</button>
-      <button onclick="filterCategory('mie')" id="catTab-mie" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">🍜 Mie</button>
-      <button onclick="filterCategory('dimsum')" id="catTab-dimsum" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">🥟 Dimsum</button>
-      <button onclick="filterCategory('minuman')" id="catTab-minuman" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">🧋 Minuman</button>
-      <button onclick="filterCategory('snack')" id="catTab-snack" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">🍟 Snack</button>
-      <button onclick="filterCategory('paket')" id="catTab-paket" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 0.8rem; border-radius: var(--radius-full);">🍱 Paket</button>
+      <!-- Category Tabs Bar -->
+      <div style="display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px 16px; scrollbar-width: none;">
+        <button onclick="filterCategory('all')" id="catTab-all" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); width: auto;">Semua</button>
+        <button onclick="filterCategory('mie')" id="catTab-mie" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍜 Mie</button>
+        <button onclick="filterCategory('dimsum')" id="catTab-dimsum" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🥟 Dimsum</button>
+        <button onclick="filterCategory('minuman')" id="catTab-minuman" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🧋 Minuman</button>
+        <button onclick="filterCategory('snack')" id="catTab-snack" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍟 Snack</button>
+        <button onclick="filterCategory('paket')" id="catTab-paket" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍱 Paket</button>
+      </div>
+
     </div>
 
     <!-- Product Grid Container -->
-    <main id="productGrid" class="product-grid" style="padding: 16px; padding-bottom: 100px;">
-      <!-- JS Rendered Products -->
+    <main style="padding: 20px 16px; padding-bottom: 100px; flex: 1;">
+      <div id="productGrid" class="product-grid">
+        <!-- JS Rendered Products -->
+      </div>
     </main>
 
-    <!-- Floating Cart Bar -->
-    <div id="floatingCart" class="floating-cart-bar" style="display: none;" onclick="window.location.href='cart.html'">
+    <!-- Floating Cart Bar (Mobile View) -->
+    <div id="floatingCart" class="floating-cart-bar" style="display: none; cursor: pointer;" onclick="window.location.href='cart.html'">
       <div class="cart-bar-info">
         <span id="cartItemCount" class="cart-bar-badge">0</span>
         <div>
@@ -49,48 +69,64 @@
           <span id="cartTotalDisplay" class="cart-bar-total">Rp 0</span>
         </div>
       </div>
-      <button class="btn btn-primary" style="width: auto; padding: 8px 16px; font-size: 0.85rem;">Lanjut Bayar →</button>
+      <button class="btn btn-primary btn-sm" style="width: auto;">Lanjut Bayar →</button>
     </div>
+
+    <!-- Bottom Navigation Bar (Mobile View) -->
+    <nav class="bottom-nav">
+      <a href="home.html" class="nav-item">
+        <span class="icon">🏠</span>Beranda
+      </a>
+      <a href="menu.html" class="nav-item active">
+        <span class="icon">🍜</span>Menu
+      </a>
+      <a href="orders.html" class="nav-item">
+        <span class="icon">📜</span>Pesanan
+      </a>
+      <a href="profile.html" class="nav-item">
+        <span class="icon">👤</span>Profil
+      </a>
+    </nav>
 
   </div>
 
   <!-- Product Detail & Level Pedas Modal -->
   <div id="productModal" class="modal-backdrop" onclick="closeProductModal()">
-    <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-sheet" style="max-width: 500px; margin: 0 auto; border-radius: var(--radius-lg);" onclick="event.stopPropagation()">
       <div class="modal-drag-handle"></div>
       
-      <div style="display: flex; gap: 14px; margin-bottom: 16px;">
-        <img id="modalImg" src="" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md);" />
+      <div style="display: flex; gap: 16px; margin-bottom: 18px; align-items: center;">
+        <img id="modalImg" src="" style="width: 84px; height: 84px; object-fit: cover; border-radius: var(--radius-md); background: #f1f5f9;" onerror="Utils.handleImageError(this)" />
         <div>
-          <h3 id="modalTitle" style="font-size: 1.1rem; font-weight: 800;"></h3>
-          <p id="modalPrice" style="color: var(--primary-pink); font-weight: 800; font-size: 1.05rem; margin-top: 2px;"></p>
-          <p id="modalDesc" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;"></p>
+          <h3 id="modalTitle" style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary);"></h3>
+          <p id="modalPrice" style="color: var(--primary-pink); font-weight: 900; font-size: 1.1rem; margin-top: 4px;"></p>
+          <p id="modalDesc" style="font-size: 0.82rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.35;"></p>
         </div>
       </div>
 
       <!-- Level Pedas Options (Visible if Mie category) -->
-      <div id="levelSection" style="margin-bottom: 16px; display: none;">
-        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px;">LEVEL PEDAS (Wajib pilih 1):</label>
+      <div id="levelSection" style="margin-bottom: 18px; display: none; background: #fff5f8; padding: 14px; border-radius: var(--radius-md); border: 1px solid rgba(233, 30, 99, 0.15);">
+        <label style="font-weight: 800; font-size: 0.85rem; display: block; margin-bottom: 10px; color: var(--primary-pink);">LEVEL PEDAS (Wajib pilih 1):</label>
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;" id="levelButtons">
           <!-- Level 1 - 8 buttons rendered via JS -->
         </div>
       </div>
 
       <!-- Special Notes Input -->
-      <div style="margin-bottom: 20px;">
-        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 6px;">Catatan Khusus (Opsional):</label>
-        <input type="text" id="modalNotes" placeholder="Cth: Tanpa daun bawang, es dipisah..." class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+      <div style="margin-bottom: 22px;">
+        <label style="font-weight: 700; font-size: 0.85rem; display: block; margin-bottom: 8px; color: var(--text-primary);">Catatan Khusus (Opsional):</label>
+        <input type="text" id="modalNotes" placeholder="Cth: Tanpa daun bawang, es dipisah..." class="form-input" />
       </div>
 
       <!-- Action Footer with Qty Controller -->
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; border-top: 1px solid var(--border-color); padding-top: 16px;">
-        <div class="qty-ctrl">
-          <button onclick="changeModalQty(-1)" class="qty-btn">−</button>
-          <span id="modalQtyVal" class="qty-val">1</span>
-          <button onclick="changeModalQty(1)" class="qty-btn">+</button>
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border-light); padding-top: 18px;">
+        <div class="qty-ctrl" style="display: flex; align-items: center; background: #f1f5f9; padding: 4px; border-radius: var(--radius-sm);">
+          <button onclick="changeModalQty(-1)" class="btn btn-secondary btn-sm" style="width: 32px; height: 32px; padding: 0;">−</button>
+          <span id="modalQtyVal" style="font-weight: 900; padding: 0 14px; font-size: 1rem;">1</span>
+          <button onclick="changeModalQty(1)" class="btn btn-secondary btn-sm" style="width: 32px; height: 32px; padding: 0;">+</button>
         </div>
 
-        <button onclick="confirmAddCart()" class="btn btn-primary" style="flex: 1;">
+        <button onclick="confirmAddCart()" class="btn btn-primary" style="flex: 1; padding: 12px; font-size: 0.95rem;">
           Tambah - <span id="modalBtnTotal">Rp 0</span>
         </button>
       </div>
@@ -146,10 +182,10 @@
 
       if (filtered.length === 0) {
         grid.innerHTML = `
-          <div class="empty-state">
-            <span style="font-size: 3rem;">🔍</span>
-            <div class="empty-state-title">Menu Tidak Ditemukan</div>
-            <p>Coba kata kunci lain atau pilih kategori berbeda.</p>
+          <div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-muted);">
+            <span style="font-size: 3rem; display: block; margin-bottom: 12px;">🔍</span>
+            <strong style="font-size: 1.1rem; color: var(--text-primary); display: block;">Menu Tidak Ditemukan</strong>
+            <p style="font-size: 0.85rem; margin-top: 4px;">Coba kata kunci lain atau pilih kategori berbeda.</p>
           </div>
         `;
         return;
@@ -158,11 +194,11 @@
       grid.innerHTML = filtered.map(p => `
         <div class="product-card">
           <div class="product-image-wrap">
-            <img src="${Utils.getProductImage(p.image_url, p.slug)}" alt="${p.name}" onerror="this.src='../asset/hero-banner.png'" />
+            <img src="${Utils.getProductImage(p.image_url, p.slug)}" alt="${p.name}" onerror="Utils.handleImageError(this)" />
           </div>
           <div class="product-info">
             <h4 class="product-title">${p.name}</h4>
-            <p style="font-size: 0.7rem; color: var(--text-secondary);" class="line-clamp-1">${p.description || ''}</p>
+            <p class="product-desc">${p.description || ''}</p>
             <div class="product-footer">
               <span class="product-price">${Utils.formatRupiah(p.base_price)}</span>
               <button onclick="openProductModal('${p.id}')" ${!p.is_available ? 'disabled' : ''} class="btn btn-primary btn-sm" style="width: auto;">
@@ -177,13 +213,13 @@
     function filterCategory(catSlug) {
       activeCategory = catSlug;
       document.querySelectorAll("[id^='catTab-']").forEach(btn => {
-        btn.className = "btn btn-secondary";
-        btn.style.background = "#e2e8f0";
-        btn.style.color = "#334155";
+        btn.className = "btn btn-secondary btn-sm";
+        btn.style.background = "var(--bg-subtle-light)";
+        btn.style.color = "var(--text-primary)";
       });
       const activeBtn = document.getElementById(`catTab-${catSlug}`);
       if (activeBtn) {
-        activeBtn.className = "btn btn-primary";
+        activeBtn.className = "btn btn-primary btn-sm";
         activeBtn.style.background = "var(--primary-pink)";
         activeBtn.style.color = "white";
       }
@@ -227,7 +263,7 @@
       for (let i = 1; i <= 8; i++) {
         const active = selectedLevel === i;
         html += `
-          <button onclick="selectLevel(${i})" class="btn" style="padding: 8px 0; font-size: 0.8rem; background: ${active ? 'var(--primary-pink)' : '#f1f5f9'}; color: ${active ? 'white' : 'var(--text-primary)'}; border: 1px solid ${active ? 'var(--primary-pink)' : '#cbd5e1'};">
+          <button onclick="selectLevel(${i})" class="btn" style="padding: 8px 0; font-size: 0.8rem; background: ${active ? 'var(--primary-pink)' : 'white'}; color: ${active ? 'white' : 'var(--text-primary)'}; border: 1px solid ${active ? 'var(--primary-pink)' : '#cbd5e1'};">
             Lvl ${i}
           </button>
         `;
@@ -258,6 +294,7 @@
 
       CartStore.addItem(selectedProduct, currentModalQty, isMie ? selectedLevel : null, notes);
       closeProductModal();
+      Utils.showToast(`${selectedProduct.name} ditambahkan ke keranjang`, "success");
     }
 
     function closeProductModal() {
@@ -267,13 +304,20 @@
     function updateCartBar() {
       const totals = CartStore.getTotals();
       const bar = document.getElementById("floatingCart");
+      const badge = document.getElementById("headerMenuCartBadge");
 
       if (totals.itemCount > 0) {
         bar.style.display = "flex";
         document.getElementById("cartItemCount").innerText = totals.itemCount;
         document.getElementById("cartTotalDisplay").innerText = Utils.formatRupiah(totals.grandTotal);
+
+        if (badge) {
+          badge.innerText = totals.itemCount;
+          badge.style.display = "inline-block";
+        }
       } else {
         bar.style.display = "none";
+        if (badge) badge.style.display = "none";
       }
     }
   </script>

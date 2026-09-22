@@ -1,6 +1,6 @@
 /* ============================================================================
    NAVIGATION & HEADERS: css/navigation.css
-   System: Cafe Online & Offline Ordering System
+   System: Cafe Online & Offline Ordering System (Mie Gacoan Redesign)
    ============================================================================ */
 
 /* App Header (Customer) */
@@ -8,21 +8,23 @@
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-light);
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-3) var(--space-5);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  height: 60px;
+  height: 64px;
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* Dark Header (Staff Dashboard) */
+/* Dark Header (Staff Dashboard, POS, KDS & Admin) */
 .dark-header {
-  background: rgba(30, 41, 59, 0.95);
+  background: rgba(30, 41, 59, 0.98);
   border-bottom: 1px solid var(--border-dark);
   color: var(--text-light);
 }
@@ -44,6 +46,7 @@
   font-size: var(--font-xl);
   letter-spacing: -0.03em;
   color: var(--text-primary);
+  text-decoration: none;
 }
 
 .brand-badge {
@@ -58,24 +61,46 @@
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.3);
 }
 
+/* Desktop Header Navigation Links (Hidden on Mobile) */
+.desktop-nav-links {
+  display: none;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.desktop-nav-link {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.desktop-nav-link:hover,
+.desktop-nav-link.active {
+  color: var(--primary-pink);
+  background: var(--primary-pink-muted);
+}
+
 /* Bottom Navigation Bar (Customer Mobile View) */
 .bottom-nav {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   width: 100%;
-  max-width: var(--container-mobile-max);
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 8px 0;
+  padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
   z-index: var(--z-fixed-bar);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.06);
 }
 
 .nav-item {
@@ -86,16 +111,34 @@
   font-size: var(--font-xs);
   font-weight: 600;
   color: var(--text-secondary);
+  text-decoration: none;
   transition: var(--transition-fast);
-  padding: 4px 12px;
+  padding: 4px 14px;
   border-radius: var(--radius-md);
 }
 
+.nav-item:hover,
 .nav-item.active {
   color: var(--primary-pink);
   font-weight: 800;
 }
 
-.nav-item svg, .nav-item .icon {
+.nav-item .icon {
   font-size: 1.25rem;
+}
+
+/* Tablet & Desktop Navigation Adaptation */
+@media (min-width: 768px) {
+  .desktop-nav-links {
+    display: flex;
+  }
+
+  .bottom-nav {
+    display: none; /* Hide mobile bottom nav on desktop/tablet */
+  }
+
+  .app-header {
+    height: 70px;
+    padding: var(--space-4) var(--space-8);
+  }
 }

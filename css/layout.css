@@ -1,45 +1,69 @@
 /* ============================================================================
    CONTAINER & LAYOUT SYSTEM: css/layout.css
-   System: Cafe Online & Offline Ordering System
+   System: Cafe Online & Offline Ordering System (Mie Gacoan Redesign)
    ============================================================================ */
 
-/* Mobile Frame Container for Customer Web App */
+/* Container for Customer Web App */
 .user-container {
   width: 100%;
-  max-width: var(--container-mobile-max);
+  max-width: var(--container-desktop-max);
   min-height: 100vh;
   background-color: var(--bg-light);
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.4);
   position: relative;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
   margin: 0 auto;
+  box-shadow: 0 0 40px rgba(15, 23, 42, 0.08);
+  transition: max-width var(--transition-normal);
 }
 
-/* Full Width Container for Cashier, KDS, Admin */
+/* Focused Content Container (for Checkout, Payment, Profile) */
+.user-container-narrow {
+  max-width: var(--container-content-max);
+  margin: 0 auto;
+}
+
+/* Full Width Container for Cashier POS, KDS, Admin */
 .dashboard-container {
   width: 100%;
   min-height: 100vh;
   background-color: var(--bg-dark);
-  color: var(--text-light);
+  color: var(--text-dark-primary);
   display: flex;
   flex-direction: column;
 }
 
 .main-content {
   flex: 1;
-  padding: var(--space-4);
+  padding: var(--space-5);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-5);
+  max-width: var(--container-desktop-max);
+  width: 100%;
+  margin: 0 auto;
 }
 
-/* Responsive Product Grid */
+/* Adaptive Product Grid */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+  }
 }
 
 /* Section Wrapper */
@@ -59,4 +83,15 @@
   font-size: var(--font-lg);
   font-weight: 800;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Mobile viewport constraint override (strictly on small screens) */
+@media (max-width: 767px) {
+  .user-container {
+    max-width: 100%;
+    box-shadow: none;
+  }
 }

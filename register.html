@@ -2,49 +2,55 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registrasi Akun - Mie Gacoan</title>
   <link rel="stylesheet" href="css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="dashboard-container" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; justify-content: center; align-items: center; padding: 24px 16px;">
 
-  <div class="user-container" style="padding: 24px; justify-content: center;">
+  <div class="user-container-narrow" style="width: 100%; max-width: 460px; margin: 0 auto;">
     
-    <div style="text-align: center; margin-bottom: 28px;">
-      <div class="brand-badge" style="display: inline-block; font-size: 1rem; padding: 6px 16px; margin-bottom: 12px;">MIE GACOAN</div>
-      <h2 style="font-size: 1.75rem; font-weight: 800;">Buat Akun Baru</h2>
-      <p style="color: var(--text-secondary); font-size: 0.9rem;">Dapatkan kemudahan pesan & promo eksklusif</p>
-    </div>
-
-    <form id="registerForm" style="display: flex; flex-direction: column; gap: 14px;">
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Nama Lengkap</label>
-        <input type="text" id="regFullName" required placeholder="Contoh: Budi Santoso" class="card" style="width: 100%; padding: 12px 16px;" />
+    <div class="card card-dark" style="padding: 32px 24px; border: 1px solid var(--border-dark); box-shadow: var(--shadow-xl); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(12px); border-radius: var(--radius-lg);">
+      
+      <div style="text-align: center; margin-bottom: 24px;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--primary-pink), #c2185b); box-shadow: 0 8px 24px rgba(233, 30, 99, 0.35); font-size: 1.8rem; margin-bottom: 14px;">
+          🌶️
+        </div>
+        <h2 style="font-size: 1.6rem; font-weight: 900; color: white; margin-bottom: 6px;">Buat Akun Baru</h2>
+        <p style="color: var(--text-dark-subtle); font-size: 0.88rem;">Dapatkan kemudahan pesan & promo eksklusif Mie Gacoan</p>
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Email</label>
-        <input type="email" id="regEmail" required placeholder="nama@email.com" class="card" style="width: 100%; padding: 12px 16px;" />
+      <form id="registerForm" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group">
+          <label class="form-label">Nama Lengkap</label>
+          <input type="text" id="regFullName" required placeholder="Contoh: Budi Santoso" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="regEmail" required placeholder="nama@email.com" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nomor Telepon (WhatsApp)</label>
+          <input type="tel" id="regPhone" required placeholder="081234567890" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="regPassword" required minlength="6" placeholder="Minimal 6 karakter" class="form-input" />
+        </div>
+
+        <button type="submit" id="btnRegisterSubmit" class="btn btn-primary" style="margin-top: 8px; padding: 14px; font-size: 1rem;">
+          Daftar Sekarang →
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--text-dark-subtle); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px;">
+        Sudah punya akun? <a href="login.html" style="color: var(--primary-pink); font-weight: 700; text-decoration: none;">Masuk di sini</a>
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Nomor Telepon (WhatsApp)</label>
-        <input type="tel" id="regPhone" required placeholder="081234567890" class="card" style="width: 100%; padding: 12px 16px;" />
-      </div>
-
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Password</label>
-        <input type="password" id="regPassword" required minlength="6" placeholder="Minimal 6 karakter" class="card" style="width: 100%; padding: 12px 16px;" />
-      </div>
-
-      <button type="submit" id="btnRegisterSubmit" class="btn btn-primary" style="margin-top: 8px;">
-        Daftar Sekarang
-      </button>
-    </form>
-
-    <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-secondary);">
-      Sudah punya akun? <a href="login.html" style="color: var(--primary-pink); font-weight: 700;">Masuk di sini</a>
     </div>
 
   </div>
@@ -75,7 +81,7 @@
       } catch (err) {
         Utils.showToast(err.message || "Gagal registrasi akun.", "error");
         btn.disabled = false;
-        btn.innerText = "Daftar Sekarang";
+        btn.innerText = "Daftar Sekarang →";
       }
     });
   </script>

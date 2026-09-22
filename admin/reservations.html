@@ -10,33 +10,35 @@
 <body class="dashboard-container">
 
   <!-- Header Navigation -->
-  <header class="app-header dark-header" style="padding: 14px 24px;">
-    <div class="brand-logo">
-      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2);">ADMIN</span>
-      <span>Manajemen Reservasi Meja</span>
+  <header class="app-header dark-header" style="padding: 14px 24px; background: #0f172a; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center;">
+    <div class="brand-logo" style="display: flex; align-items: center; gap: 10px;">
+      <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2); color: white; padding: 4px 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.75rem;">ADMIN</span>
+      <span style="font-weight: 900; font-family: var(--font-heading); color: white; font-size: 1.15rem;">Manajemen Reservasi Meja</span>
     </div>
-    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Dashboard</a>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 8px 16px; font-size: 0.8rem; background: #1e293b; color: white; border: 1px solid #334155;">← Dashboard</a>
   </header>
 
   <!-- Sub Navigation Bar -->
-  <div style="background: #1e293b; padding: 10px 24px; border-bottom: 1px solid #334155; display: flex; gap: 16px; overflow-x: auto;">
-    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📊 Dashboard</a>
-    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🍜 Produk Menu</a>
-    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📂 Kategori</a>
-    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📦 Stok Inventory</a>
-    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🎟️ Promo</a>
-    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📜 Transaksi</a>
-    <a href="reservations.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem;">📅 Reservasi</a>
-    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">👥 Pengguna & Staff</a>
-    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">📈 Laporan</a>
-    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">⚙️ Pengaturan</a>
-    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem;">🛡️ Audit Logs</a>
+  <div style="background: #1e293b; padding: 12px 24px; border-bottom: 1px solid #334155; display: flex; gap: 20px; overflow-x: auto; align-items: center;">
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📊 Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🍜 Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📂 Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📦 Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🎟️ Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📜 Transaksi</a>
+    <a href="reservations.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px; whitespace: nowrap;">📅 Reservasi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">👥 Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📈 Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">⚙️ Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🛡️ Audit Logs</a>
   </div>
 
-  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+  <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; width: 100%;">
     
-    <div class="card card-dark">
-      <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">📅 Master Data Reservasi Meja Global</h3>
+    <div class="card card-dark" style="background: #1e293b; border-radius: var(--radius-lg); padding: 20px;">
+      <h3 style="font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
+        <span>📅</span> Master Data Reservasi Meja Global
+      </h3>
       <div class="table-responsive">
         <table class="data-table">
           <thead>

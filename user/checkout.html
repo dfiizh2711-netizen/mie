@@ -2,79 +2,87 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <div class="user-container">
+  <div class="user-container user-container-narrow">
     
     <!-- Header Navigation -->
     <header class="app-header">
-      <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
         <a href="cart.html" class="icon-btn">←</a>
         <h1 class="header-title">Konfirmasi Checkout</h1>
       </div>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="desktop-nav-links">
+        <a href="home.html" class="desktop-nav-link">Beranda</a>
+        <a href="menu.html" class="desktop-nav-link">Menu Catalog</a>
+        <a href="orders.html" class="desktop-nav-link">Riwayat Pesanan</a>
+        <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
+      </nav>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 110px;">
+    <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 110px; flex: 1;">
       
       <!-- Customer Information Form -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 12px;">👤 Informasi Pemesan</h4>
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">👤 Informasi Pemesan</h4>
         
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nama Pemesan *</label>
-            <input type="text" id="custName" required placeholder="Contoh: Budi Santoso" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <div class="form-group">
+            <label class="form-label">Nama Pemesan *</label>
+            <input type="text" id="custName" required placeholder="Contoh: Budi Santoso" class="form-input" />
           </div>
 
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nomor Telepon (WhatsApp) *</label>
-            <input type="tel" id="custPhone" required placeholder="081234567890" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          <div class="form-group">
+            <label class="form-label">Nomor Telepon (WhatsApp) *</label>
+            <input type="tel" id="custPhone" required placeholder="081234567890" class="form-input" />
           </div>
 
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Email (Struk Elektronik)</label>
-            <input type="email" id="custEmail" placeholder="nama@email.com" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          <div class="form-group">
+            <label class="form-label">Email (Struk Elektronik)</label>
+            <input type="email" id="custEmail" placeholder="nama@email.com" class="form-input" />
           </div>
         </div>
       </div>
 
       <!-- Dine In / Take Away Summary Card -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">📌 Tipe & Lokasi</h4>
-        <div id="checkoutOrderTypeInfo" style="font-size: 0.85rem; color: var(--text-secondary);">
+      <div class="card" style="padding: 18px 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; color: var(--text-primary);">📌 Tipe & Lokasi Pesanan</h4>
+        <div id="checkoutOrderTypeInfo" style="font-size: 0.88rem; color: var(--text-secondary);">
           <!-- Rendered via JS -->
         </div>
       </div>
 
       <!-- Items List Summary Card -->
-      <div class="card">
-        <h4 style="font-size: 0.9rem; font-weight: 700; margin-bottom: 10px;">🍽️ Pesanan Saya</h4>
-        <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 8px;">
+      <div class="card" style="padding: 20px;">
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 14px; color: var(--text-primary);">🍽️ Pesanan Saya</h4>
+        <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 10px;">
           <!-- Rendered via JS -->
         </div>
       </div>
 
       <!-- Grand Total Summary Card -->
-      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; padding: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <div>
-            <span style="font-size: 0.8rem; color: #94a3b8; display: block;">Total Tagihan Akhir</span>
-            <strong id="checkoutGrandTotal" style="font-size: 1.2rem; color: var(--primary-pink);">Rp 0</strong>
+            <span style="font-size: 0.82rem; color: #94a3b8; display: block;">Total Tagihan Akhir</span>
+            <strong id="checkoutGrandTotal" style="font-size: 1.3rem; color: var(--primary-pink); font-weight: 900;">Rp 0</strong>
           </div>
-          <span style="font-size: 0.75rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 4px; color: #cbd5e1;">Sudah Pajak & Service</span>
+          <span style="font-size: 0.78rem; background: rgba(255,255,255,0.12); padding: 4px 10px; border-radius: 4px; color: #cbd5e1;">Sudah Termasuk Pajak & Service</span>
         </div>
       </div>
 
     </main>
 
     <!-- Bottom Submit Button -->
-    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: white; border-top: 1px solid var(--border-color); padding: 12px 16px; z-index: 80;">
-      <button onclick="processCheckout()" id="btnProcessCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1rem;">
+    <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--container-content-max); background: white; border-top: 1px solid var(--border-light); padding: 14px 20px; z-index: 80; box-shadow: 0 -4px 20px rgba(15,23,42,0.06);">
+      <button onclick="processCheckout()" id="btnProcessCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1.05rem; width: 100%;">
         💳 Lanjut ke Pembayaran Midtrans →
       </button>
     </div>
@@ -118,9 +126,9 @@
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
               <span class="badge badge-dinein">DINE IN</span>
-              <strong style="margin-left: 8px; font-size: 0.95rem;">${cart.table_number || 'Belum Pilih Meja'}</strong>
+              <strong style="margin-left: 8px; font-size: 0.95rem; color: var(--text-primary);">${cart.table_number || 'Belum Pilih Meja'}</strong>
             </div>
-            <a href="home.html" style="font-size: 0.8rem; color: var(--primary-pink); font-weight: 600;">Ubah Meja</a>
+            <a href="home.html" style="font-size: 0.82rem; color: var(--primary-pink); font-weight: 700; text-decoration: none;">Ubah Meja</a>
           </div>
         `;
       } else {
@@ -134,12 +142,12 @@
 
       const itemsList = document.getElementById("checkoutItemsList");
       itemsList.innerHTML = cart.items.map(item => `
-        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.88rem; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
           <div>
-            <strong>${item.quantity}x</strong> ${item.product_name}
-            ${item.notes ? `<div style="font-size: 0.75rem; color: var(--text-secondary); font-style: italic;">Note: ${item.notes}</div>` : ''}
+            <strong style="color: var(--text-primary);">${item.quantity}x</strong> ${item.product_name}
+            ${item.notes ? `<div style="font-size: 0.78rem; color: var(--text-secondary); font-style: italic; margin-top: 2px;">Note: ${item.notes}</div>` : ''}
           </div>
-          <span style="font-weight: 700;">${Utils.formatRupiah(item.subtotal)}</span>
+          <span style="font-weight: 800; color: var(--text-primary);">${Utils.formatRupiah(item.subtotal)}</span>
         </div>
       `).join("");
 

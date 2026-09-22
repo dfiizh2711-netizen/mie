@@ -11,48 +11,69 @@
 
   <div class="user-container">
     
-    <!-- Header Navigation -->
-    <header class="app-header">
+    <!-- Desktop Header Navigation -->
+    <header class="desktop-nav-header">
+      <div class="desktop-nav-container">
+        <a href="home.html" class="desktop-logo">
+          <span class="logo-badge">GACOAN</span>
+          <span class="logo-text">Mie Gacoan</span>
+        </a>
+        <nav class="desktop-nav-links">
+          <a href="home.html" class="desktop-nav-link">Beranda</a>
+          <a href="menu.html" class="desktop-nav-link">Menu</a>
+          <a href="orders.html" class="desktop-nav-link">Pesanan</a>
+          <a href="profile.html" class="desktop-nav-link active">Profil</a>
+        </nav>
+        <div class="desktop-header-actions">
+          <a href="cart.html" class="cart-icon-btn">
+            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Header Navigation -->
+    <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
         <a href="profile.html" class="icon-btn">←</a>
         <h1 class="header-title">Detail Reservasi Meja</h1>
       </div>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; max-width: 600px; margin: 0 auto; width: 100%;">
       
       <!-- Status Card -->
-      <div class="card" style="text-align: center; padding: 20px;">
-        <div id="resStatusBadge" class="badge badge-pending" style="margin-bottom: 10px; font-size: 0.85rem; padding: 6px 14px;">
+      <div class="card" style="text-align: center; padding: 24px; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+        <div id="resStatusBadge" class="badge badge-pending" style="margin-bottom: 12px; font-size: 0.85rem; padding: 6px 16px; display: inline-block;">
           PENDING
         </div>
-        <h3 id="resTableTitle" style="font-size: 1.25rem; font-weight: 800;">-</h3>
-        <p id="resDateTime" style="font-size: 0.9rem; color: var(--primary-pink); font-weight: 700; margin-top: 4px;"></p>
+        <h3 id="resTableTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); font-family: var(--font-heading); margin: 0;">-</h3>
+        <p id="resDateTime" style="font-size: 0.95rem; color: var(--primary-pink); font-weight: 700; margin-top: 6px;"></p>
       </div>
 
       <!-- Information Details -->
-      <div class="card" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
-        <div style="display: flex; justify-content: space-between;">
+      <div class="card" style="display: flex; flex-direction: column; gap: 12px; font-size: 0.9rem; padding: 20px; border-radius: var(--radius-lg);">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
           <span style="color: var(--text-secondary);">Nama Pemesan</span>
-          <strong id="resName">-</strong>
+          <strong id="resName" style="color: var(--text-primary);">-</strong>
         </div>
-        <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
           <span style="color: var(--text-secondary);">WhatsApp</span>
-          <strong id="resPhone">-</strong>
+          <strong id="resPhone" style="color: var(--text-primary);">-</strong>
         </div>
-        <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
           <span style="color: var(--text-secondary);">Jumlah Tamu</span>
-          <strong id="resGuest">-</strong>
+          <strong id="resGuest" style="color: var(--text-primary);">-</strong>
         </div>
         <div style="display: flex; justify-content: space-between;">
           <span style="color: var(--text-secondary);">Catatan</span>
-          <span id="resNotes" style="font-style: italic;">-</span>
+          <span id="resNotes" style="font-style: italic; color: var(--text-primary);">-</span>
         </div>
       </div>
 
       <!-- Action Button -->
       <div id="cancelActionArea">
-        <button onclick="cancelReservation()" id="btnCancelRes" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2;">
+        <button onclick="cancelReservation()" id="btnCancelRes" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2; width: 100%; font-weight: 700; padding: 12px;">
           ❌ Batalkan Reservasi
         </button>
       </div>

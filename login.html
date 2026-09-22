@@ -2,43 +2,49 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Login - Mie Gacoan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Akun - Mie Gacoan</title>
   <link rel="stylesheet" href="css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body class="dashboard-container" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; justify-content: center; align-items: center; padding: 24px 16px;">
 
-  <div class="user-container" style="padding: 24px; justify-content: center;">
+  <div class="user-container-narrow" style="width: 100%; max-width: 440px; margin: 0 auto;">
     
-    <div style="text-align: center; margin-bottom: 32px;">
-      <div class="brand-badge" style="display: inline-block; font-size: 1rem; padding: 6px 16px; margin-bottom: 12px;">MIE GACOAN</div>
-      <h2 style="font-size: 1.75rem; font-weight: 800;">Selamat Datang!</h2>
-      <p style="color: var(--text-secondary); font-size: 0.9rem;">Silakan masuk ke akun Anda untuk memesan</p>
-    </div>
-
-    <form id="loginForm" style="display: flex; flex-direction: column; gap: 16px;">
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Email</label>
-        <input type="email" id="loginEmail" required placeholder="nama@email.com" class="card" style="width: 100%; padding: 12px 16px;" />
+    <div class="card card-dark" style="padding: 32px 24px; border: 1px solid var(--border-dark); box-shadow: var(--shadow-xl); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(12px); border-radius: var(--radius-lg);">
+      
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--primary-pink), #c2185b); box-shadow: 0 8px 24px rgba(233, 30, 99, 0.35); font-size: 1.8rem; margin-bottom: 14px;">
+          🌶️
+        </div>
+        <h2 style="font-size: 1.6rem; font-weight: 900; color: white; margin-bottom: 6px;">Selamat Datang!</h2>
+        <p style="color: var(--text-dark-subtle); font-size: 0.88rem;">Silakan masuk ke akun Anda untuk pesan menu & reservasi</p>
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px;">Password</label>
-        <input type="password" id="loginPassword" required placeholder="••••••••" class="card" style="width: 100%; padding: 12px 16px;" />
+      <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" id="loginEmail" required placeholder="nama@email.com" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" class="form-input" />
+        </div>
+
+        <button type="submit" id="btnLoginSubmit" class="btn btn-primary" style="margin-top: 8px; padding: 14px; font-size: 1rem;">
+          Masuk Akun →
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 24px; font-size: 0.88rem; color: var(--text-dark-subtle); border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px;">
+        Belum punya akun? <a href="register.html" style="color: var(--primary-pink); font-weight: 700; text-decoration: none;">Daftar Sekarang</a>
       </div>
 
-      <button type="submit" id="btnLoginSubmit" class="btn btn-primary" style="margin-top: 8px;">
-        Masuk Akun
-      </button>
-    </form>
+      <div style="margin-top: 16px; text-align: center;">
+        <a href="user/home.html" style="font-size: 0.82rem; color: var(--text-muted); text-decoration: underline;">Lanjutkan Sebagai Tamu (Guest)</a>
+      </div>
 
-    <div style="text-align: center; margin-top: 24px; font-size: 0.9rem; color: var(--text-secondary);">
-      Belum punya akun? <a href="register.html" style="color: var(--primary-pink); font-weight: 700;">Daftar Sekarang</a>
-    </div>
-
-    <div style="margin-top: 32px; text-align: center;">
-      <a href="user/home.html" style="font-size: 0.85rem; color: var(--text-muted); text-decoration: underline;">Lanjutkan Sebagai Tamu / Guest</a>
     </div>
 
   </div>
@@ -69,7 +75,7 @@
       } catch (err) {
         Utils.showToast(err.message || "Gagal login. Cek email & password Anda.", "error");
         btn.disabled = false;
-        btn.innerText = "Masuk Akun";
+        btn.innerText = "Masuk Akun →";
       }
     });
   </script>

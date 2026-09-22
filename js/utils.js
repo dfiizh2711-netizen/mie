@@ -131,6 +131,18 @@ const Utils = {
     return target;
   },
 
+  // Image Error Fallback Handler
+  handleImageError(imgEl, fallbackSrc) {
+    if (!imgEl) return;
+    imgEl.onerror = null;
+    const isSubdir = window.location.pathname.includes('/user/') ||
+                     window.location.pathname.includes('/cashier/') ||
+                     window.location.pathname.includes('/kitchen/') ||
+                     window.location.pathname.includes('/admin/');
+    const defaultFallback = isSubdir ? '../asset/hero-banner.png' : 'asset/hero-banner.png';
+    imgEl.src = fallbackSrc || defaultFallback;
+  },
+
   // Sync / Create Kitchen Order Ticket for confirmed/paid orders
   async syncKitchenTicket(orderId) {
     if (!orderId) return;

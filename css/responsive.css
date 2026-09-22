@@ -1,9 +1,9 @@
 /* ============================================================================
    RESPONSIVE OVERHAUL & BREAKPOINTS: css/responsive.css
-   System: Cafe Online & Offline Ordering System
+   System: Cafe Online & Offline Ordering System (Mie Gacoan Redesign)
    ============================================================================ */
 
-/* Small Mobile Screens (320px - 375px) */
+/* Extra Small Mobile (320px - 375px) */
 @media (max-width: 375px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -24,23 +24,49 @@
 
   .floating-cart-bar {
     width: calc(100% - 20px);
-    bottom: 10px;
+    bottom: 12px;
     padding: 10px 14px;
   }
 }
 
-/* Tablet & Up (768px+) */
+/* Tablet Screens (768px to 1023px) */
 @media (min-width: 768px) {
-  .dashboard-grid {
+  .dashboard-grid, .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+
+  /* KDS Kanban Column Grid */
+  .kds-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-4);
   }
 }
 
-/* Desktop Screens (1024px+) */
+/* Large Desktop Screens (1024px and up) */
 @media (min-width: 1024px) {
-  .dashboard-grid {
+  .dashboard-grid, .metrics-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+  }
+
+  /* Customer Home Banner Layout */
+  .hero-banner-wrap {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-5);
+  }
+}
+
+/* KDS Mobile fallback */
+@media (max-width: 767px) {
+  .kds-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    height: auto !important;
+    overflow-y: auto;
   }
 }

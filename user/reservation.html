@@ -11,64 +11,85 @@
 
   <div class="user-container">
     
-    <!-- Header Navigation -->
-    <header class="app-header">
+    <!-- Desktop Header Navigation -->
+    <header class="desktop-nav-header">
+      <div class="desktop-nav-container">
+        <a href="home.html" class="desktop-logo">
+          <span class="logo-badge">GACOAN</span>
+          <span class="logo-text">Mie Gacoan</span>
+        </a>
+        <nav class="desktop-nav-links">
+          <a href="home.html" class="desktop-nav-link">Beranda</a>
+          <a href="menu.html" class="desktop-nav-link">Menu</a>
+          <a href="orders.html" class="desktop-nav-link">Pesanan</a>
+          <a href="profile.html" class="desktop-nav-link active">Profil</a>
+        </nav>
+        <div class="desktop-header-actions">
+          <a href="cart.html" class="cart-icon-btn">
+            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Header Navigation -->
+    <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
         <a href="home.html" class="icon-btn">←</a>
         <h1 class="header-title">Reservasi Meja Restoran</h1>
       </div>
     </header>
 
-    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px;">
+    <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 40px; max-width: 640px; margin: 0 auto; width: 100%;">
       
       <!-- Intro Card -->
-      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none;">
-        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 4px;">📅 Booking Tempat Duduk</h3>
-        <p style="font-size: 0.8rem; color: #94a3b8;">Pesan tempat untuk acara keluarga, ulang tahun, atau rombongan tanpa antre.</p>
+      <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-md);">
+        <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; font-family: var(--font-heading);">📅 Booking Tempat Duduk</h3>
+        <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.5;">Pesan tempat untuk acara keluarga, ulang tahun, atau rombongan tanpa perlu antre di lokasi.</p>
       </div>
 
       <!-- Reservation Form -->
-      <form id="reservationForm" class="card" style="display: flex; flex-direction: column; gap: 14px;">
+      <form id="reservationForm" class="card" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: var(--radius-lg);">
         
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Pilih Meja Restoran *</label>
-          <select id="resTable" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;">
+        <div class="form-group" style="margin: 0;">
+          <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Pilih Meja Restoran *</label>
+          <select id="resTable" required class="form-input" style="width: 100%;">
             <option value="">-- Pilih Meja (Kapasitas Kursi) --</option>
           </select>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Tanggal Reservasi *</label>
-            <input type="date" id="resDate" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group" style="margin: 0;">
+            <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Tanggal Reservasi *</label>
+            <input type="date" id="resDate" required class="form-input" style="width: 100%;" />
           </div>
-          <div>
-            <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jam Kedatangan *</label>
-            <input type="time" id="resTime" required class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+          <div class="form-group" style="margin: 0;">
+            <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Jam Kedatangan *</label>
+            <input type="time" id="resTime" required class="form-input" style="width: 100%;" />
           </div>
         </div>
 
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Jumlah Tamu / Orang *</label>
-          <input type="number" id="resGuestCount" min="1" max="20" required value="2" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div class="form-group" style="margin: 0;">
+          <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Jumlah Tamu / Orang *</label>
+          <input type="number" id="resGuestCount" min="1" max="20" required value="2" class="form-input" style="width: 100%;" />
         </div>
 
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nama Pemesan *</label>
-          <input type="text" id="resCustName" required placeholder="Nama Lengkap" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div class="form-group" style="margin: 0;">
+          <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Nama Pemesan *</label>
+          <input type="text" id="resCustName" required placeholder="Nama Lengkap" class="form-input" style="width: 100%;" />
         </div>
 
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Nomor Telepon (WhatsApp) *</label>
-          <input type="tel" id="resCustPhone" required placeholder="081234567890" class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div class="form-group" style="margin: 0;">
+          <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Nomor Telepon (WhatsApp) *</label>
+          <input type="tel" id="resCustPhone" required placeholder="081234567890" class="form-input" style="width: 100%;" />
         </div>
 
-        <div>
-          <label style="display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px;">Catatan Tambahan (Opsional)</label>
-          <input type="text" id="resNotes" placeholder="Cth: Dekorasi ulang tahun, butuh baby chair..." class="card" style="width: 100%; padding: 10px 14px; font-size: 0.85rem;" />
+        <div class="form-group" style="margin: 0;">
+          <label style="display: block; font-size: 0.825rem; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">Catatan Tambahan (Opsional)</label>
+          <input type="text" id="resNotes" placeholder="Cth: Dekorasi ulang tahun, butuh baby chair..." class="form-input" style="width: 100%;" />
         </div>
 
-        <button type="submit" id="btnResSubmit" class="btn btn-primary" style="margin-top: 6px;">
+        <button type="submit" id="btnResSubmit" class="btn btn-primary" style="margin-top: 8px; width: 100%; padding: 14px;">
           📅 Konfirmasi Reservasi
         </button>
 
@@ -131,11 +152,18 @@
 
         const sb = getSupabase();
 
+        // Get actual Supabase Auth User ID if logged in, or null if guest/anon
+        const { data: authData } = await sb.auth.getUser();
+        const validAuthUserId = authData?.user?.id || null;
+
+        const resId = crypto.randomUUID();
+
         // Create Reservation Record
-        const { data: res, error } = await sb
+        const { error } = await sb
           .from("reservations")
           .insert({
-            user_id: currentUser?.id || null,
+            id: resId,
+            user_id: validAuthUserId,
             branch_id: window.APP_CONFIG.DEFAULT_BRANCH_ID,
             table_id,
             reservation_date,
@@ -145,15 +173,13 @@
             customer_phone,
             notes: notes || null,
             status: "PENDING"
-          })
-          .select()
-          .single();
+          });
 
         if (error) throw error;
 
         Utils.showToast("Reservasi Berhasil Dibuat!", "success");
         setTimeout(() => {
-          window.location.href = `reservation-detail.html?id=${res.id}`;
+          window.location.href = `reservation-detail.html?id=${resId}`;
         }, 800);
 
       } catch (err) {
