@@ -89,15 +89,16 @@
     async function loadKdsTickets() {
       const sb = getSupabase();
 
-      // 1. Try loading from kitchen_orders first
-      let { data: list } = await sb
+      // 1. Load active kitchen tickets from kitchen_orders
+      let { data: list, error } = await sb
         .from("kitchen_orders")
         .select("*, orders(*, tables(table_number), order_items(*)), kitchen_order_items(*)")
         .in("status", ["NEW", "PREPARING", "READY"])
         .order("created_at", { ascending: true });
 
-      // 2. Fallback: If kitchen_orders is empty or RLS restricted, load active orders directly from `orders` table
-      if (!list || list.length === 0) {
+      // 2. Fallback ONLY if query fails due to database error (e.g. table missing or RLS error)
+      if (error || !list) {
+        console.warn("kitchen_orders query error, falling back to direct orders:", error);
         const { data: directOrders } = await sb
           .from("orders")
           .select("*, tables(table_number), order_items(*)")
@@ -224,6 +225,7 @@
         const payload = { status: newStatus };
         if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
         if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
+        if (newStatus === 'COMPLETED') payload.completed_at = new Date().toISOString();
         await sb.from("kitchen_orders").update(payload).eq("id", ticketId);
       }
 
