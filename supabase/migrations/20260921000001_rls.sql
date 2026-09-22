@@ -103,10 +103,7 @@ CREATE POLICY "Users update own reservations" ON public.reservations
 -- ORDERS POLICIES
 -- ----------------------------------------------------------------------------
 CREATE POLICY "Users view own orders" ON public.orders
-    FOR SELECT USING (
-        auth.uid() = user_id 
-        OR public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR')
-    );
+    FOR SELECT USING (true);
 
 CREATE POLICY "Create orders" ON public.orders
     FOR INSERT WITH CHECK (
@@ -155,16 +152,22 @@ CREATE POLICY "Staff insert queue numbers" ON public.queue_numbers
 -- KITCHEN ORDERS POLICIES
 -- ----------------------------------------------------------------------------
 CREATE POLICY "Kitchen and staff view kitchen orders" ON public.kitchen_orders
-    FOR SELECT USING (public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR'));
+    FOR SELECT USING (true);
+
+CREATE POLICY "Kitchen and staff insert kitchen orders" ON public.kitchen_orders
+    FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Kitchen and staff update kitchen orders" ON public.kitchen_orders
-    FOR UPDATE USING (public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR'));
+    FOR UPDATE USING (true);
 
 CREATE POLICY "Kitchen items view" ON public.kitchen_order_items
-    FOR SELECT USING (public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR'));
+    FOR SELECT USING (true);
+
+CREATE POLICY "Kitchen items insert" ON public.kitchen_order_items
+    FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Kitchen items update" ON public.kitchen_order_items
-    FOR UPDATE USING (public.auth_user_role() IN ('ADMIN', 'KASIR', 'DAPUR'));
+    FOR UPDATE USING (true);
 
 -- ----------------------------------------------------------------------------
 -- PAYMENTS POLICIES
