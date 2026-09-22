@@ -34,7 +34,7 @@ const assetDir = path.join(__dirname, '..', 'asset');
 let missingCount = 0;
 
 if (!fs.existsSync(assetDir)) {
-  console.error(`❌ CRITICAL: Asset directory not found at ${assetDir}`);
+  console.error(`[FAIL] CRITICAL: Asset directory not found at ${assetDir}`);
   process.exit(1);
 }
 
@@ -44,16 +44,16 @@ requiredAssets.forEach(asset => {
     const stats = fs.statSync(filePath);
     console.log(`  [OK] ${asset.padEnd(22)} - ${(stats.size / 1024).toFixed(1)} KB`);
   } else {
-    console.error(`  [MISSING] ❌ ${asset}`);
+    console.error(`  [MISSING] [FAIL] ${asset}`);
     missingCount++;
   }
 });
 
 console.log("-----------------------------------------");
 if (missingCount === 0) {
-  console.log("✅ SUCCESS: All 17 product assets are present and valid!");
+  console.log("[PASS] SUCCESS: All 17 product assets are present and valid!");
   process.exit(0);
 } else {
-  console.error(`❌ FAILED: ${missingCount} required assets are missing!`);
+  console.error(`[FAIL] FAILED: ${missingCount} required assets are missing!`);
   process.exit(1);
 }

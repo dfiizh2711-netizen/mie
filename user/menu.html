@@ -6,6 +6,7 @@
   <title>Daftar Menu - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -14,7 +15,7 @@
     <!-- Top Bar Navigation -->
     <header class="app-header">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="home.html" class="icon-btn" title="Kembali">←</a>
+        <a href="home.html" class="icon-btn" title="Kembali"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Menu Mie Gacoan</h1>
       </div>
 
@@ -28,7 +29,7 @@
       </nav>
 
       <a href="cart.html" class="icon-btn" title="Keranjang" style="position: relative;">
-        🛒
+        <i data-lucide="shopping-cart"></i>
         <span id="headerMenuCartBadge" class="badge" style="position: absolute; top: -2px; right: -2px; background: var(--primary-pink); color: white; padding: 2px 6px; font-size: 0.65rem; border-radius: 9999px; display: none;">0</span>
       </a>
     </header>
@@ -38,17 +39,17 @@
       
       <!-- Search Input Bar -->
       <div style="padding: 12px 16px;">
-        <input type="text" id="searchInput" oninput="onSearchInput(this.value)" placeholder="🔍 Cari menu favoritmu (cth: Hompimpa, Udang Keju)..." class="form-input" />
+        <input type="text" id="searchInput" oninput="onSearchInput(this.value)" placeholder="Cari menu favoritmu (cth: Hompimpa, Udang Keju)..." class="form-input" />
       </div>
 
       <!-- Category Tabs Bar -->
       <div style="display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px 16px; scrollbar-width: none;">
         <button onclick="filterCategory('all')" id="catTab-all" class="btn btn-primary btn-sm" style="border-radius: var(--radius-full); width: auto;">Semua</button>
-        <button onclick="filterCategory('mie')" id="catTab-mie" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍜 Mie</button>
-        <button onclick="filterCategory('dimsum')" id="catTab-dimsum" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🥟 Dimsum</button>
-        <button onclick="filterCategory('minuman')" id="catTab-minuman" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🧋 Minuman</button>
-        <button onclick="filterCategory('snack')" id="catTab-snack" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍟 Snack</button>
-        <button onclick="filterCategory('paket')" id="catTab-paket" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;">🍱 Paket</button>
+        <button onclick="filterCategory('mie')" id="catTab-mie" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;"><i data-lucide="utensils"></i> Mie</button>
+        <button onclick="filterCategory('dimsum')" id="catTab-dimsum" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;"><i data-lucide="soup"></i> Dimsum</button>
+        <button onclick="filterCategory('minuman')" id="catTab-minuman" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;"><i data-lucide="cup-soda"></i> Minuman</button>
+        <button onclick="filterCategory('snack')" id="catTab-snack" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;"><i data-lucide="popcorn"></i> Snack</button>
+        <button onclick="filterCategory('paket')" id="catTab-paket" class="btn btn-secondary btn-sm" style="border-radius: var(--radius-full); width: auto;"><i data-lucide="box"></i> Paket</button>
       </div>
 
     </div>
@@ -69,22 +70,22 @@
           <span id="cartTotalDisplay" class="cart-bar-total">Rp 0</span>
         </div>
       </div>
-      <button class="btn btn-primary btn-sm" style="width: auto;">Lanjut Bayar →</button>
+      <button class="btn btn-primary btn-sm" style="width: auto;">Lanjut Bayar <i data-lucide="arrow-right"></i></button>
     </div>
 
     <!-- Bottom Navigation Bar (Mobile View) -->
     <nav class="bottom-nav">
       <a href="home.html" class="nav-item">
-        <span class="icon">🏠</span>Beranda
+        <span class="icon"><i data-lucide="home"></i></span>Beranda
       </a>
       <a href="menu.html" class="nav-item active">
-        <span class="icon">🍜</span>Menu
+        <span class="icon"><i data-lucide="utensils"></i></span>Menu
       </a>
       <a href="orders.html" class="nav-item">
-        <span class="icon">📜</span>Pesanan
+        <span class="icon"><i data-lucide="receipt"></i></span>Pesanan
       </a>
       <a href="profile.html" class="nav-item">
-        <span class="icon">👤</span>Profil
+        <span class="icon"><i data-lucide="user"></i></span>Profil
       </a>
     </nav>
 
@@ -183,7 +184,7 @@
       if (filtered.length === 0) {
         grid.innerHTML = `
           <div style="grid-column: 1 / -1; text-align: center; padding: 48px 16px; color: var(--text-muted);">
-            <span style="font-size: 3rem; display: block; margin-bottom: 12px;">🔍</span>
+            <span style="font-size: 3rem; display: block; margin-bottom: 12px;"><i data-lucide="search"></i></span>
             <strong style="font-size: 1.1rem; color: var(--text-primary); display: block;">Menu Tidak Ditemukan</strong>
             <p style="font-size: 0.85rem; margin-top: 4px;">Coba kata kunci lain atau pilih kategori berbeda.</p>
           </div>

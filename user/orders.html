@@ -6,6 +6,7 @@
   <title>Riwayat Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -14,7 +15,7 @@
     <!-- Header Navigation -->
     <header class="app-header">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="home.html" class="icon-btn">←</a>
+        <a href="home.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Riwayat Pesanan Saya</h1>
       </div>
 
@@ -37,16 +38,16 @@
     <!-- Bottom Navigation Bar (Mobile View) -->
     <nav class="bottom-nav">
       <a href="home.html" class="nav-item">
-        <span class="icon">🏠</span>Beranda
+        <span class="icon"><i data-lucide="home"></i></span>Beranda
       </a>
       <a href="menu.html" class="nav-item">
-        <span class="icon">🍜</span>Menu
+        <span class="icon"><i data-lucide="utensils"></i></span>Menu
       </a>
       <a href="orders.html" class="nav-item active">
-        <span class="icon">📜</span>Pesanan
+        <span class="icon"><i data-lucide="receipt"></i></span>Pesanan
       </a>
       <a href="profile.html" class="nav-item">
-        <span class="icon">👤</span>Profil
+        <span class="icon"><i data-lucide="user"></i></span>Profil
       </a>
     </nav>
 
@@ -78,10 +79,10 @@
       if (error || !orders || orders.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
-            <span style="font-size: 3.5rem; display: block; margin-bottom: 12px;">📜</span>
+            <span style="font-size: 3.5rem; display: block; margin-bottom: 12px;"><i data-lucide="receipt"></i></span>
             <strong style="font-size: 1.1rem; color: var(--text-primary); display: block;">Belum Ada Pesanan</strong>
             <p style="font-size: 0.85rem; margin-top: 4px;">Pesanan yang Anda buat akan muncul di sini.</p>
-            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 18px auto 0 auto; padding: 12px 24px;">Pesan Sekarang →</a>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 18px auto 0 auto; padding: 12px 24px;">Pesan Sekarang <i data-lucide="arrow-right"></i></a>
           </div>
         `;
         return;

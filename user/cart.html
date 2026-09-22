@@ -6,6 +6,7 @@
   <title>Keranjang Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -14,7 +15,7 @@
     <!-- Header Navigation -->
     <header class="app-header">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="menu.html" class="icon-btn" title="Kembali">←</a>
+        <a href="menu.html" class="icon-btn" title="Kembali"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Keranjang Saya</h1>
       </div>
 
@@ -26,7 +27,7 @@
         <a href="profile.html" class="desktop-nav-link">Profil Saya</a>
       </nav>
 
-      <button onclick="clearCartConfirm()" class="icon-btn" title="Kosongkan Keranjang" style="color: var(--accent-red);">🗑️</button>
+      <button onclick="clearCartConfirm()" class="icon-btn" title="Kosongkan Keranjang" style="color: var(--accent-red);"><i data-lucide="trash-2"></i></button>
     </header>
 
     <main style="padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; padding-bottom: 120px; flex: 1;">
@@ -38,7 +39,7 @@
 
       <!-- Promo Code Voucher Section -->
       <div class="card" style="padding: 20px;">
-        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);">🎟️ Kode Promo & Voucher</h4>
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);"><i data-lucide="ticket"></i> Kode Promo & Voucher</h4>
         <div style="display: flex; gap: 10px;">
           <input type="text" id="promoInput" placeholder="Masukkan kode (cth: GACOAN10)" class="form-input" style="text-transform: uppercase; flex: 1;" />
           <button onclick="applyPromoCode()" class="btn btn-primary" style="width: auto; padding: 10px 20px;">Pakai</button>
@@ -78,7 +79,7 @@
     <!-- Bottom Checkout Action Bar -->
     <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--container-content-max); background: white; border-top: 1px solid var(--border-light); padding: 14px 20px; z-index: 80; box-shadow: 0 -4px 20px rgba(15,23,42,0.06);">
       <a href="checkout.html" id="btnCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1.05rem; width: 100%;">
-        Lanjut ke Checkout →
+        Lanjut ke Checkout <i data-lucide="arrow-right"></i>
       </a>
     </div>
 
@@ -102,10 +103,10 @@
       if (cart.items.length === 0) {
         container.innerHTML = `
           <div style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
-            <span style="font-size: 4rem; display: block; margin-bottom: 12px;">🛒</span>
+            <span style="font-size: 4rem; display: block; margin-bottom: 12px;"><i data-lucide="shopping-cart"></i></span>
             <strong style="font-size: 1.2rem; color: var(--text-primary); display: block;">Keranjang Masih Kosong</strong>
             <p style="font-size: 0.88rem; margin-top: 6px;">Pilih menu lezat Mie Gacoan favoritmu sekarang.</p>
-            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 20px auto 0 auto; padding: 12px 24px;">Lihat Menu Catalog →</a>
+            <a href="menu.html" class="btn btn-primary" style="width: auto; margin: 20px auto 0 auto; padding: 12px 24px;">Lihat Menu Catalog <i data-lucide="arrow-right"></i></a>
           </div>
         `;
         checkoutBtn.style.pointerEvents = "none";
@@ -182,7 +183,7 @@
         promoBadge.innerHTML = `
           <div style="display: flex; align-items: center; justify-content: space-between; background: #d1fae5; color: #047857; padding: 8px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700;">
             <span>Voucher Aktif: ${cart.promo.code} (${cart.promo.name})</span>
-            <button onclick="CartStore.removePromo();" style="background: none; border: none; color: #b91c1c; font-weight: 800; font-size: 1rem; cursor: pointer;">✕</button>
+            <button onclick="CartStore.removePromo();" style="background: none; border: none; color: #b91c1c; font-weight: 800; font-size: 1rem; cursor: pointer;"><i data-lucide="x-circle"></i></button>
           </div>
         `;
       } else {

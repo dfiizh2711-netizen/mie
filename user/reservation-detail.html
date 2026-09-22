@@ -6,6 +6,7 @@
   <title>Detail Reservasi - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         </nav>
         <div class="desktop-header-actions">
           <a href="cart.html" class="cart-icon-btn">
-            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+            <i data-lucide="shopping-cart"></i> <span class="cart-badge-count cart-count-badge">0</span>
           </a>
         </div>
       </div>
@@ -35,7 +36,7 @@
     <!-- Mobile Header Navigation -->
     <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="profile.html" class="icon-btn">←</a>
+        <a href="profile.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Detail Reservasi Meja</h1>
       </div>
     </header>
@@ -74,7 +75,7 @@
       <!-- Action Button -->
       <div id="cancelActionArea">
         <button onclick="cancelReservation()" id="btnCancelRes" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2; width: 100%; font-weight: 700; padding: 12px;">
-          ❌ Batalkan Reservasi
+          <i data-lucide="x-circle"></i> Batalkan Reservasi
         </button>
       </div>
 
@@ -120,7 +121,8 @@
       if (res.status === "CANCELLED") badge.className = "badge badge-cancelled";
 
       document.getElementById("resTableTitle").innerText = res.tables?.table_number || "Meja Restoran";
-      document.getElementById("resDateTime").innerText = `📅 ${res.reservation_date} • 🕒 ${res.reservation_time}`;
+      document.getElementById("resDateTime").innerHTML = `<i data-lucide="calendar"></i> ${res.reservation_date} • <i data-lucide="clock"></i> ${res.reservation_time}`;
+      if (window.lucide) lucide.createIcons();
       document.getElementById("resName").innerText = res.customer_name;
       document.getElementById("resPhone").innerText = res.customer_phone;
       document.getElementById("resGuest").innerText = `${res.guest_count} Orang`;

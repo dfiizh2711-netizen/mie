@@ -6,6 +6,7 @@
   <title>Admin Dashboard - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dashboard-container">
 
@@ -18,26 +19,26 @@
 
     <div style="display: flex; align-items: center; gap: 16px;">
       <div style="display: flex; align-items: center; gap: 8px; background: #1e293b; padding: 6px 14px; border-radius: 20px; border: 1px solid #334155;">
-        <span style="font-size: 0.85rem;">🛡️</span>
+        <span style="font-size: 0.85rem;"><i data-lucide="shield-check"></i></span>
         <span id="adminUser" style="font-size: 0.85rem; color: #f8fafc; font-weight: 700;">Administrator</span>
       </div>
-      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar" style="background: #334155; color: white; border: none;">🚪</button>
+      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar" style="background: #334155; color: white; border: none;"><i data-lucide="log-out"></i></button>
     </div>
   </header>
 
   <!-- Sub Navigation Bar -->
   <div style="background: #1e293b; padding: 12px 24px; border-bottom: 1px solid #334155; display: flex; gap: 20px; overflow-x: auto; align-items: center;">
-    <a href="dashboard.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px; whitespace: nowrap;">📊 Dashboard</a>
-    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🍜 Produk Menu</a>
-    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📂 Kategori</a>
-    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📦 Stok Inventory</a>
-    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🎟️ Promo</a>
-    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📜 Transaksi</a>
-    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📅 Reservasi</a>
-    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">👥 Pengguna & Staff</a>
-    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📈 Laporan</a>
-    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">⚙️ Pengaturan</a>
-    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🛡️ Audit Logs</a>
+    <a href="dashboard.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px; whitespace: nowrap;"><i data-lucide="bar-chart-3"></i> Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="utensils"></i> Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="folder"></i> Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="package"></i> Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="ticket"></i> Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="receipt"></i> Transaksi</a>
+    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="calendar"></i> Reservasi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="users"></i> Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="line-chart"></i> Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="settings"></i> Pengaturan</a>
+    <a href="audit-logs.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="shield-check"></i> Audit Logs</a>
   </div>
 
   <main style="padding: 24px; display: flex; flex-direction: column; gap: 24px; max-width: 1400px; margin: 0 auto; width: 100%;">
@@ -72,7 +73,7 @@
       
       <!-- Recent Sales List -->
       <div class="card card-dark">
-        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;">📈 Transaksi Terakhir</h3>
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px;"><i data-lucide="line-chart"></i> Transaksi Terakhir</h3>
         <div class="table-responsive">
           <table class="data-table">
             <thead>
@@ -94,7 +95,7 @@
 
       <!-- Low Stock Alert Box -->
       <div class="card card-dark">
-        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; color: var(--accent-orange);">⚠️ Alert Stok Menipis</h3>
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; color: var(--accent-orange);"><i data-lucide="alert-triangle"></i> Alert Stok Menipis</h3>
         <div id="admStockAlertList" style="display: flex; flex-direction: column; gap: 10px;">
           <!-- JS Rendered -->
         </div>
@@ -181,7 +182,7 @@
       document.getElementById("admLowStock").innerText = lowItems.length;
 
       if (lowItems.length === 0) {
-        container.innerHTML = `<div style="color: #94a3b8; font-size: 0.85rem; text-align: center;">Semua stok produk aman 👍</div>`;
+        container.innerHTML = `<div style="color: #94a3b8; font-size: 0.85rem; text-align: center;">Semua stok produk aman <i data-lucide="thumbs-up"></i></div>`;
         return;
       }
 

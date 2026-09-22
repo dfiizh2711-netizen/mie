@@ -6,6 +6,7 @@
   <title>Checkout Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -14,7 +15,7 @@
     <!-- Header Navigation -->
     <header class="app-header">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="cart.html" class="icon-btn">←</a>
+        <a href="cart.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Konfirmasi Checkout</h1>
       </div>
 
@@ -31,7 +32,7 @@
       
       <!-- Customer Information Form -->
       <div class="card" style="padding: 20px;">
-        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);">👤 Informasi Pemesan</h4>
+        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 16px; color: var(--text-primary);"><i data-lucide="user"></i> Informasi Pemesan</h4>
         
         <div style="display: flex; flex-direction: column; gap: 14px;">
           <div class="form-group">
@@ -53,7 +54,7 @@
 
       <!-- Dine In / Take Away Summary Card -->
       <div class="card" style="padding: 18px 20px;">
-        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; color: var(--text-primary);">📌 Tipe & Lokasi Pesanan</h4>
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px; color: var(--text-primary);"><i data-lucide="map-pin"></i> Tipe & Lokasi Pesanan</h4>
         <div id="checkoutOrderTypeInfo" style="font-size: 0.88rem; color: var(--text-secondary);">
           <!-- Rendered via JS -->
         </div>
@@ -61,7 +62,7 @@
 
       <!-- Items List Summary Card -->
       <div class="card" style="padding: 20px;">
-        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 14px; color: var(--text-primary);">🍽️ Pesanan Saya</h4>
+        <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 14px; color: var(--text-primary);"><i data-lucide="utensils"></i> Pesanan Saya</h4>
         <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 10px;">
           <!-- Rendered via JS -->
         </div>
@@ -83,7 +84,7 @@
     <!-- Bottom Submit Button -->
     <div style="position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: var(--container-content-max); background: white; border-top: 1px solid var(--border-light); padding: 14px 20px; z-index: 80; box-shadow: 0 -4px 20px rgba(15,23,42,0.06);">
       <button onclick="processCheckout()" id="btnProcessCheckout" class="btn btn-primary" style="padding: 14px; font-size: 1.05rem; width: 100%;">
-        💳 Lanjut ke Pembayaran Midtrans →
+        <i data-lucide="credit-card"></i> Lanjut ke Pembayaran Midtrans <i data-lucide="arrow-right"></i>
       </button>
     </div>
 
@@ -234,7 +235,8 @@
       } catch (err) {
         Utils.showToast(err.message || "Gagal membuat pesanan", "error");
         btn.disabled = false;
-        btn.innerText = "💳 Lanjut ke Pembayaran Midtrans →";
+        btn.innerHTML = '<span>Lanjut ke Pembayaran Midtrans</span> <i data-lucide="arrow-right"></i>';
+        if (window.lucide) lucide.createIcons();
       }
     }
   </script>

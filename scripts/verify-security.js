@@ -35,7 +35,7 @@ function scanDirectory(dirPath) {
       const content = fs.readFileSync(fullPath, 'utf8');
       forbiddenKeywords.forEach(keyword => {
         if (content.includes(keyword) && !content.includes(`Deno.env.get("${keyword}")`)) {
-          console.error(`❌ CRITICAL SECURITY VIOLATION: '${keyword}' found in ${fullPath}`);
+          console.error(`[FAIL] CRITICAL SECURITY VIOLATION: '${keyword}' found in ${fullPath}`);
           violationCount++;
         }
       });
@@ -50,7 +50,7 @@ rootFiles.forEach(f => {
     const content = fs.readFileSync(fp, 'utf8');
     forbiddenKeywords.forEach(keyword => {
       if (content.includes(keyword)) {
-        console.error(`❌ CRITICAL SECURITY VIOLATION: '${keyword}' found in ${fp}`);
+        console.error(`[FAIL] CRITICAL SECURITY VIOLATION: '${keyword}' found in ${fp}`);
         violationCount++;
       }
     });
@@ -61,9 +61,9 @@ scanDirs.forEach(d => scanDirectory(path.join(__dirname, '..', d)));
 
 console.log("-----------------------------------------");
 if (violationCount === 0) {
-  console.log("✅ SECURITY PASSED: Zero secret leaks or Server Keys found in frontend!");
+  console.log("[PASS] SECURITY PASSED: Zero secret leaks or Server Keys found in frontend!");
   process.exit(0);
 } else {
-  console.error(`❌ SECURITY FAILED: ${violationCount} forbidden secrets detected in frontend code!`);
+  console.error(`[FAIL] SECURITY FAILED: ${violationCount} forbidden secrets detected in frontend code!`);
   process.exit(1);
 }

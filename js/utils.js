@@ -40,13 +40,17 @@ const Utils = {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
 
-    let icon = 'ℹ️';
-    if (type === 'success') icon = '✅';
-    if (type === 'error') icon = '❌';
-    if (type === 'warning') icon = '⚠️';
+    let iconName = 'info';
+    if (type === 'success') iconName = 'check-circle-2';
+    if (type === 'error') iconName = 'x-circle';
+    if (type === 'warning') iconName = 'alert-triangle';
 
-    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    toast.innerHTML = `<i data-lucide="${iconName}"></i><span>${message}</span>`;
     container.appendChild(toast);
+
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
 
     setTimeout(() => {
       toast.style.opacity = '0';
@@ -185,4 +189,11 @@ const Utils = {
     }
   }
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+});
+
 

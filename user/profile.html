@@ -6,6 +6,7 @@
   <title>Profil Saya - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         </nav>
         <div class="desktop-header-actions">
           <a href="cart.html" class="cart-icon-btn">
-            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+            <i data-lucide="shopping-cart"></i> <span class="cart-badge-count cart-count-badge">0</span>
           </a>
         </div>
       </div>
@@ -35,7 +36,7 @@
     <!-- Mobile Header Navigation -->
     <header class="app-header hide-on-desktop">
       <h1 class="header-title">Profil Saya</h1>
-      <a href="home.html" class="icon-btn">🏠</a>
+      <a href="home.html" class="icon-btn"><i data-lucide="home"></i></a>
     </header>
 
     <main style="padding: 16px; display: flex; flex-direction: column; gap: 16px; padding-bottom: 90px;">
@@ -43,7 +44,7 @@
       <!-- Profile Info Header Card -->
       <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 24px; background: linear-gradient(135deg, #ffffff, #f8fafc); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
         <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-pink), #ff4081); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 900; box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);">
-          👤
+          <i data-lucide="user"></i>
         </div>
         <div>
           <h3 id="profName" style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0;">Tamu / Guest</h3>
@@ -55,23 +56,23 @@
       <!-- Quick Action Navigation Menu -->
       <div class="card" style="display: flex; flex-direction: column; padding: 8px 18px; border-radius: var(--radius-md);">
         <a href="orders.html" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.925rem; color: var(--text-primary); text-decoration: none;">
-          <span style="display: flex; align-items: center; gap: 10px;"><span>📜</span> Riwayat Pesanan Makanan</span>
-          <span style="color: var(--text-muted);">→</span>
+          <span style="display: flex; align-items: center; gap: 10px;"><span><i data-lucide="receipt"></i></span> Riwayat Pesanan Makanan</span>
+          <span style="color: var(--text-muted);"><i data-lucide="arrow-right"></i></span>
         </a>
         <a href="reservation.html" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-color); font-weight: 600; font-size: 0.925rem; color: var(--text-primary); text-decoration: none;">
-          <span style="display: flex; align-items: center; gap: 10px;"><span>📅</span> Reservasi Meja Restoran</span>
-          <span style="color: var(--text-muted);">→</span>
+          <span style="display: flex; align-items: center; gap: 10px;"><span><i data-lucide="calendar"></i></span> Reservasi Meja Restoran</span>
+          <span style="color: var(--text-muted);"><i data-lucide="arrow-right"></i></span>
         </a>
         <a href="../login.html" id="authLink" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 0; font-weight: 600; font-size: 0.925rem; color: var(--primary-pink); text-decoration: none;">
-          <span style="display: flex; align-items: center; gap: 10px;"><span>🔑</span> Login / Switch Akun</span>
-          <span>→</span>
+          <span style="display: flex; align-items: center; gap: 10px;"><span><i data-lucide="key-round"></i></span> Login / Switch Akun</span>
+          <span><i data-lucide="arrow-right"></i></span>
         </a>
       </div>
 
       <!-- Active Reservations Section -->
       <div class="card" style="padding: 20px; border-radius: var(--radius-md);">
         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-          <span>📌</span> Reservasi Meja Aktif
+          <span><i data-lucide="map-pin"></i></span> Reservasi Meja Aktif
         </h4>
         <div id="userReservationsList" style="display: flex; flex-direction: column; gap: 10px;">
           <!-- JS Rendered Reservations -->
@@ -81,7 +82,7 @@
       <!-- Logout Button (Shown when logged in) -->
       <div id="logoutSection" style="display: none;">
         <button onclick="AuthModule.logout()" class="btn btn-secondary" style="color: var(--accent-red); background: #fee2e2; width: 100%; font-weight: 700; border-radius: var(--radius-md); padding: 12px;">
-          🚪 Keluar Akun (Logout)
+          <i data-lucide="log-out"></i> Keluar Akun (Logout)
         </button>
       </div>
 
@@ -90,16 +91,16 @@
     <!-- Bottom Navigation Bar -->
     <nav class="bottom-nav">
       <a href="home.html" class="nav-item">
-        <span class="icon">🏠</span>Beranda
+        <span class="icon"><i data-lucide="home"></i></span>Beranda
       </a>
       <a href="menu.html" class="nav-item">
-        <span class="icon">🍜</span>Menu
+        <span class="icon"><i data-lucide="utensils"></i></span>Menu
       </a>
       <a href="orders.html" class="nav-item">
-        <span class="icon">📜</span>Pesanan
+        <span class="icon"><i data-lucide="receipt"></i></span>Pesanan
       </a>
       <a href="profile.html" class="nav-item active">
-        <span class="icon">👤</span>Profil
+        <span class="icon"><i data-lucide="user"></i></span>Profil
       </a>
     </nav>
 

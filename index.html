@@ -6,6 +6,7 @@
   <title>Mie Gacoan - Self Ordering & POS Restoran</title>
   <meta name="description" content="Sistem Pemesanan Online, POS Kasir, KDS Dapur & Reservasi Mie Gacoan Sidoarjo Pabean" />
   <link rel="stylesheet" href="css/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="dashboard-container" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%); min-height: 100vh; justify-content: center; align-items: center; padding: 24px 16px;">
@@ -15,7 +16,7 @@
     <!-- Brand Header & Hero Title -->
     <div style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;">
       <div style="display: inline-flex; align-items: center; justify-content: center; width: 84px; height: 84px; border-radius: 24px; background: linear-gradient(135deg, var(--primary-pink), #c2185b); box-shadow: 0 12px 32px rgba(233, 30, 99, 0.4); font-size: 2.2rem; font-weight: 900; color: white;">
-        🌶️
+        <i data-lucide="flame" style="width: 44px; height: 44px;"></i>
       </div>
       <div>
         <h1 style="font-size: 2.5rem; font-weight: 900; letter-spacing: -0.03em; color: white; margin-bottom: 6px;">MIE GACOAN</h1>
@@ -37,10 +38,10 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <a href="user/home.html" class="btn btn-primary" style="padding: 14px; font-size: 1rem; width: 100%;">
-            🍜 Pesan Sekarang (Customer)
+            <i data-lucide="utensils"></i> Pesan Sekarang (Customer)
           </a>
           <a href="login.html" class="btn btn-secondary" style="padding: 10px; font-size: 0.85rem; width: 100%; text-align: center;">
-            🔑 Login Akun / Registrasi
+            <i data-lucide="key-round"></i> Login Akun / Registrasi
           </a>
         </div>
       </div>
@@ -54,16 +55,16 @@
         </div>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <a href="cashier/dashboard.html" class="btn btn-dark" style="padding: 12px; font-size: 0.9rem; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <span>🖥️ Kasir / POS Dashboard</span>
-            <span>→</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><i data-lucide="monitor"></i> Kasir / POS Dashboard</span>
+            <i data-lucide="arrow-right"></i>
           </a>
           <a href="kitchen/dashboard.html" class="btn btn-dark" style="padding: 12px; font-size: 0.9rem; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <span>🍳 Dapur KDS (Display System)</span>
-            <span>→</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><i data-lucide="chef-hat"></i> Dapur KDS (Display System)</span>
+            <i data-lucide="arrow-right"></i>
           </a>
           <a href="admin/dashboard.html" class="btn btn-dark" style="padding: 12px; font-size: 0.9rem; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <span>⚙️ Panel Admin Restoran</span>
-            <span>→</span>
+            <span style="display: flex; align-items: center; gap: 8px;"><i data-lucide="settings-2"></i> Panel Admin Restoran</span>
+            <i data-lucide="arrow-right"></i>
           </a>
         </div>
       </div>

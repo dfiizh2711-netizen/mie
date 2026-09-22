@@ -6,6 +6,7 @@
   <title>Reservasi Meja Restoran - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         </nav>
         <div class="desktop-header-actions">
           <a href="cart.html" class="cart-icon-btn">
-            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+            <i data-lucide="shopping-cart"></i> <span class="cart-badge-count cart-count-badge">0</span>
           </a>
         </div>
       </div>
@@ -35,7 +36,7 @@
     <!-- Mobile Header Navigation -->
     <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="home.html" class="icon-btn">←</a>
+        <a href="home.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Reservasi Meja Restoran</h1>
       </div>
     </header>
@@ -44,7 +45,7 @@
       
       <!-- Intro Card -->
       <div class="card" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: none; border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-md);">
-        <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; font-family: var(--font-heading);">📅 Booking Tempat Duduk</h3>
+        <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; font-family: var(--font-heading);"><i data-lucide="calendar"></i> Booking Tempat Duduk</h3>
         <p style="font-size: 0.85rem; color: #94a3b8; line-height: 1.5;">Pesan tempat untuk acara keluarga, ulang tahun, atau rombongan tanpa perlu antre di lokasi.</p>
       </div>
 
@@ -90,7 +91,7 @@
         </div>
 
         <button type="submit" id="btnResSubmit" class="btn btn-primary" style="margin-top: 8px; width: 100%; padding: 14px;">
-          📅 Konfirmasi Reservasi
+          <i data-lucide="calendar"></i> Konfirmasi Reservasi
         </button>
 
       </form>
@@ -184,8 +185,8 @@
 
       } catch (err) {
         Utils.showToast(err.message || "Gagal membuat reservasi. Meja mungkin sudah dibooking pada jam tersebut.", "error");
-        btn.disabled = false;
-        btn.innerText = "📅 Konfirmasi Reservasi";
+        btn.innerHTML = '<i data-lucide="calendar"></i> Konfirmasi Reservasi';
+        if (window.lucide) lucide.createIcons();
       }
     });
   </script>

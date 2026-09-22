@@ -6,6 +6,7 @@
   <title>Kasir POS - Manual Order - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dashboard-container" style="overflow-y: hidden; height: 100vh;">
 
@@ -16,7 +17,7 @@
       <span>Input Order Manual Walk-In</span>
     </div>
     <div style="display: flex; gap: 12px;">
-      <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;">← Kembali ke Dashboard</a>
+      <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem;"><i data-lucide="arrow-left"></i> Kembali ke Dashboard</a>
     </div>
   </header>
 
@@ -28,14 +29,14 @@
       
       <!-- Category Tabs & Search Bar -->
       <div style="padding: 12px 16px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; gap: 12px; align-items: center;">
-        <input type="text" id="posSearch" oninput="onPosSearch(this.value)" placeholder="🔍 Cari menu makanan / minuman..." class="card card-dark" style="flex: 1; padding: 8px 12px; font-size: 0.85rem;" />
+        <input type="text" id="posSearch" oninput="onPosSearch(this.value)" placeholder="<i data-lucide="search"></i> Cari menu makanan / minuman..." class="card card-dark" style="flex: 1; padding: 8px 12px; font-size: 0.85rem;" />
         
         <div style="display: flex; gap: 6px;">
           <button onclick="filterPosCat('all')" id="posCat-all" class="btn btn-primary" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">Semua</button>
-          <button onclick="filterPosCat('mie')" id="posCat-mie" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🍜 Mie</button>
-          <button onclick="filterPosCat('dimsum')" id="posCat-dimsum" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🥟 Dimsum</button>
-          <button onclick="filterPosCat('minuman')" id="posCat-minuman" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🧋 Minuman</button>
-          <button onclick="filterPosCat('snack')" id="posCat-snack" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;">🍟 Snack</button>
+          <button onclick="filterPosCat('mie')" id="posCat-mie" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;"><i data-lucide="utensils"></i> Mie</button>
+          <button onclick="filterPosCat('dimsum')" id="posCat-dimsum" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;"><i data-lucide="soup"></i> Dimsum</button>
+          <button onclick="filterPosCat('minuman')" id="posCat-minuman" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;"><i data-lucide="cup-soda"></i> Minuman</button>
+          <button onclick="filterPosCat('snack')" id="posCat-snack" class="btn btn-dark" style="width: auto; padding: 6px 12px; font-size: 0.75rem;"><i data-lucide="popcorn"></i> Snack</button>
         </div>
       </div>
 
@@ -83,9 +84,9 @@
 
         <!-- Payment Method Selection -->
         <div style="display: flex; gap: 8px; margin-top: 4px;">
-          <button onclick="setPosPaymentMethod('CASH')" id="payMethod-CASH" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.8rem;">💵 Tunai (Cash)</button>
-          <button onclick="setPosPaymentMethod('QRIS')" id="payMethod-QRIS" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;">📱 QRIS</button>
-          <button onclick="setPosPaymentMethod('DEBIT')" id="payMethod-DEBIT" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;">💳 Debit</button>
+          <button onclick="setPosPaymentMethod('CASH')" id="payMethod-CASH" class="btn btn-primary" style="flex: 1; padding: 8px; font-size: 0.8rem;"><i data-lucide="banknote"></i> Tunai (Cash)</button>
+          <button onclick="setPosPaymentMethod('QRIS')" id="payMethod-QRIS" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;"><i data-lucide="smartphone"></i> QRIS</button>
+          <button onclick="setPosPaymentMethod('DEBIT')" id="payMethod-DEBIT" class="btn btn-dark" style="flex: 1; padding: 8px; font-size: 0.8rem;"><i data-lucide="credit-card"></i> Debit</button>
         </div>
 
         <!-- Cash Amount Received & Change Calculator -->
@@ -95,7 +96,7 @@
         </div>
 
         <button onclick="submitPosOrder()" id="btnSubmitPos" class="btn btn-success" style="padding: 14px; font-size: 1rem; font-weight: 800; margin-top: 4px;">
-          🖨️ Cetak Antrean & Selesaikan Order
+          <i data-lucide="printer"></i> Cetak Antrean & Selesaikan Order
         </button>
 
       </div>
@@ -357,18 +358,18 @@
 
         await Utils.syncKitchenTicket(order.id);
 
-        alert(`✅ Transaksi Berhasil!\n\nNomor Antrean: ${queueNum}\nTotal: ${Utils.formatRupiah(grandTotal)}\nMetode: ${posPaymentMethod}`);
+        alert(`<i data-lucide="check-circle-2"></i> Transaksi Berhasil!\n\nNomor Antrean: ${queueNum}\nTotal: ${Utils.formatRupiah(grandTotal)}\nMetode: ${posPaymentMethod}`);
 
         posCart = [];
         document.getElementById("cashReceivedInput").value = "";
         renderPosCart();
         btn.disabled = false;
-        btn.innerText = "🖨️ Cetak Antrean & Selesaikan Order";
+        btn.innerText = "<i data-lucide="printer"></i> Cetak Antrean & Selesaikan Order";
 
       } catch (err) {
         Utils.showToast(err.message || "Gagal memproses transaksi kasir", "error");
         btn.disabled = false;
-        btn.innerText = "🖨️ Cetak Antrean & Selesaikan Order";
+        btn.innerText = "<i data-lucide="printer"></i> Cetak Antrean & Selesaikan Order";
       }
     }
   </script>

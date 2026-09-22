@@ -37,7 +37,7 @@ const schemaFile = path.join(__dirname, '..', 'supabase', 'migrations', '2026092
 const rlsFile = path.join(__dirname, '..', 'supabase', 'migrations', '20260921000001_rls.sql');
 
 if (!fs.existsSync(schemaFile) || !fs.existsSync(rlsFile)) {
-  console.error("❌ CRITICAL: Schema or RLS migration file missing!");
+  console.error("[FAIL] CRITICAL: Schema or RLS migration file missing!");
   process.exit(1);
 }
 
@@ -60,9 +60,9 @@ requiredTables.forEach(table => {
 
 console.log("-----------------------------------------");
 if (missingTables === 0) {
-  console.log("✅ SUCCESS: All 20 tables & RLS policies verified successfully!");
+  console.log("[PASS] SUCCESS: All 20 tables & RLS policies verified successfully!");
   process.exit(0);
 } else {
-  console.error(`❌ FAILED: ${missingTables} tables failed schema check!`);
+  console.error(`[FAIL] FAILED: ${missingTables} tables failed schema check!`);
   process.exit(1);
 }

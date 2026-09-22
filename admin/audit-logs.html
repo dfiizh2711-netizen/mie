@@ -6,6 +6,7 @@
   <title>Admin - Audit Logs - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dashboard-container">
 
@@ -15,29 +16,29 @@
       <span class="brand-badge" style="background: linear-gradient(135deg, var(--accent-purple), #7b1fa2); color: white; padding: 4px 12px; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.75rem;">ADMIN</span>
       <span style="font-weight: 900; font-family: var(--font-heading); color: white; font-size: 1.15rem;">Audit Logs Log Aktivitas Sistem</span>
     </div>
-    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 8px 16px; font-size: 0.8rem; background: #1e293b; color: white; border: 1px solid #334155;">← Dashboard</a>
+    <a href="dashboard.html" class="btn btn-dark" style="width: auto; padding: 8px 16px; font-size: 0.8rem; background: #1e293b; color: white; border: 1px solid #334155;"><i data-lucide="arrow-left"></i> Dashboard</a>
   </header>
 
   <!-- Sub Navigation Bar -->
   <div style="background: #1e293b; padding: 12px 24px; border-bottom: 1px solid #334155; display: flex; gap: 20px; overflow-x: auto; align-items: center;">
-    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📊 Dashboard</a>
-    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🍜 Produk Menu</a>
-    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📂 Kategori</a>
-    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📦 Stok Inventory</a>
-    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">🎟️ Promo</a>
-    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📜 Transaksi</a>
-    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📅 Reservasi</a>
-    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">👥 Pengguna & Staff</a>
-    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">📈 Laporan</a>
-    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;">⚙️ Pengaturan</a>
-    <a href="audit-logs.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px; whitespace: nowrap;">🛡️ Audit Logs</a>
+    <a href="dashboard.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="bar-chart-3"></i> Dashboard</a>
+    <a href="products.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="utensils"></i> Produk Menu</a>
+    <a href="categories.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="folder"></i> Kategori</a>
+    <a href="inventory.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="package"></i> Stok Inventory</a>
+    <a href="promotions.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="ticket"></i> Promo</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="receipt"></i> Transaksi</a>
+    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="calendar"></i> Reservasi</a>
+    <a href="users.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="users"></i> Pengguna & Staff</a>
+    <a href="reports.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="line-chart"></i> Laporan</a>
+    <a href="settings.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none; whitespace: nowrap;"><i data-lucide="settings"></i> Pengaturan</a>
+    <a href="audit-logs.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px; whitespace: nowrap;"><i data-lucide="shield-check"></i> Audit Logs</a>
   </div>
 
   <main style="padding: 24px; display: flex; flex-direction: column; gap: 20px; max-width: 1400px; margin: 0 auto; width: 100%;">
     
     <div class="card card-dark" style="background: #1e293b; border-radius: var(--radius-lg); padding: 20px;">
       <h3 style="font-size: 1.1rem; font-weight: 800; color: white; margin-bottom: 18px; display: flex; align-items: center; gap: 8px;">
-        <span>🛡️</span> Catatan Jejak Audit (Audit Trail)
+        <span><i data-lucide="shield-check"></i></span> Catatan Jejak Audit (Audit Trail)
       </h3>
       <div class="table-responsive">
         <table class="data-table">

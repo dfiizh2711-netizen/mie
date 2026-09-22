@@ -6,6 +6,7 @@
   <title>Kasir POS - Dashboard - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="dashboard-container">
 
@@ -18,25 +19,25 @@
 
     <div style="display: flex; align-items: center; gap: 16px;">
       <a href="manual-order.html" class="btn btn-primary" style="width: auto; padding: 8px 18px; font-size: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
-        ➕ Input Order Manual (Walk-In)
+        <i data-lucide="plus"></i> Input Order Manual (Walk-In)
       </a>
       <a href="queue.html" class="btn btn-dark" style="width: auto; padding: 8px 16px; font-size: 0.85rem; background: #1e293b; color: white; border: 1px solid #334155;">
-        📺 Layar Antrean
+        <i data-lucide="tv"></i> Layar Antrean
       </a>
       <div style="display: flex; align-items: center; gap: 8px; background: #1e293b; padding: 6px 14px; border-radius: 20px; border: 1px solid #334155;">
-        <span style="font-size: 0.85rem;">👤</span>
+        <span style="font-size: 0.85rem;"><i data-lucide="user"></i></span>
         <span id="cashierUser" style="font-size: 0.85rem; color: #f8fafc; font-weight: 700;">Kasir</span>
       </div>
-      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar" style="background: #334155; color: white; border: none;">🚪</button>
+      <button onclick="AuthModule.logout()" class="icon-btn" title="Keluar" style="background: #334155; color: white; border: none;"><i data-lucide="log-out"></i></button>
     </div>
   </header>
 
   <!-- Sub Navigation Bar -->
   <div style="background: #1e293b; padding: 12px 24px; border-bottom: 1px solid #334155; display: flex; gap: 20px; align-items: center;">
-    <a href="dashboard.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px;">📊 Dashboard</a>
-    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;">📜 Kelola Pesanan</a>
-    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;">📅 Kelola Reservasi</a>
-    <a href="manual-order.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;">🛍️ Kasir Manual</a>
+    <a href="dashboard.html" style="color: var(--primary-pink); font-weight: 700; font-size: 0.9rem; text-decoration: none; border-bottom: 2px solid var(--primary-pink); padding-bottom: 4px;"><i data-lucide="bar-chart-3"></i> Dashboard</a>
+    <a href="orders.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;"><i data-lucide="receipt"></i> Kelola Pesanan</a>
+    <a href="reservations.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;"><i data-lucide="calendar"></i> Kelola Reservasi</a>
+    <a href="manual-order.html" style="color: #94a3b8; font-weight: 600; font-size: 0.9rem; text-decoration: none;"><i data-lucide="shopping-bag"></i> Kasir Manual</a>
   </div>
 
   <main style="padding: 24px; display: flex; flex-direction: column; gap: 24px; max-width: 1400px; margin: 0 auto; width: 100%;">
@@ -75,9 +76,9 @@
     <div class="card card-dark" style="background: #1e293b; border-radius: var(--radius-lg); padding: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
         <h3 style="font-size: 1.1rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px;">
-          <span>⚡</span> Pesanan Terbaru Masuk (Realtime)
+          <span><i data-lucide="zap"></i></span> Pesanan Terbaru Masuk (Realtime)
         </h3>
-        <a href="orders.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem; background: #334155; color: white; border: none;">Lihat Semua Pesanan →</a>
+        <a href="orders.html" class="btn btn-dark" style="width: auto; padding: 6px 14px; font-size: 0.8rem; background: #334155; color: white; border: none;">Lihat Semua Pesanan <i data-lucide="arrow-right"></i></a>
       </div>
 
       <div class="table-responsive">

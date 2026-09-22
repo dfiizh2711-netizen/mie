@@ -18,7 +18,7 @@ function runStep(scriptName, description) {
     console.log(output);
     return true;
   } catch (err) {
-    console.error(`❌ FAILED at ${scriptName}:`, err.stdout || err.message);
+    console.error(`[FAIL] FAILED at ${scriptName}:`, err.stdout || err.message);
     return false;
   }
 }
@@ -29,9 +29,9 @@ const s3 = runStep('verify-security.js', '3. Secret Leak & Frontend Security Sca
 
 console.log("\n=================================================");
 if (s1 && s2 && s3) {
-  console.log("🎉 FULL AUDIT PASSED: ALL SYSTEM CHECKS PASSED WITH ZERO ERRORS!");
+  console.log("[SUCCESS] FULL AUDIT PASSED: ALL SYSTEM CHECKS PASSED WITH ZERO ERRORS!");
   process.exit(0);
 } else {
-  console.error("❌ FULL AUDIT FAILED: ONE OR MORE AUDIT CHECKS FAILED!");
+  console.error("[FAIL] FULL AUDIT FAILED: ONE OR MORE AUDIT CHECKS FAILED!");
   process.exit(1);
 }

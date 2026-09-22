@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Midtrans Snap JS (Sandbox mode by default) -->
   <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-demo123456"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -16,7 +17,7 @@
     <!-- Header Navigation -->
     <header class="app-header">
       <div style="display: flex; align-items: center; gap: 12px;">
-        <a href="orders.html" class="icon-btn">←</a>
+        <a href="orders.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Pembayaran Midtrans</h1>
       </div>
 
@@ -56,13 +57,13 @@
         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.4;">Mendukung QRIS (GoPay, ShopeePay, OVO, Dana), Transfer Bank, dan Kartu Kredit melalui Midtrans Snap.</p>
         
         <button id="btnOpenSnap" onclick="triggerMidtransSnap()" class="btn btn-primary" style="padding: 16px; font-size: 1.05rem; width: 100%;">
-          💳 Bayar Sekarang via Midtrans Snap
+          <i data-lucide="credit-card"></i> Bayar Sekarang via Midtrans Snap
         </button>
 
         <!-- Sandbox Simulation Button for Testing without Live Merchant Key -->
         <div style="margin-top: 20px; padding-top: 18px; border-top: 1px dashed var(--border-light); text-align: center;">
           <button onclick="simulateSuccessPayment()" class="btn btn-secondary" style="font-size: 0.85rem; background: #e0e7ff; color: #3730a3; width: 100%; border: none;">
-            🧪 Simulasikan Pembayaran Berhasil (Testing Mode)
+            <i data-lucide="flask-conical"></i> Simulasikan Pembayaran Berhasil (Testing Mode)
           </button>
         </div>
       </div>
@@ -81,7 +82,7 @@
           <span style="font-weight: 900; font-size: 1.3rem; color: #ee2737; letter-spacing: 1px;">QRIS</span>
           <span style="font-size: 0.75rem; background: #fee2e2; color: #991b1b; font-weight: 800; padding: 3px 10px; border-radius: 9999px;">Pembayaran Instant</span>
         </div>
-        <button onclick="closeQrisModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #64748b; padding: 0 4px;">✕</button>
+        <button onclick="closeQrisModal()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #64748b; padding: 0 4px;"><i data-lucide="x-circle"></i></button>
       </div>
 
       <p style="font-size: 0.88rem; color: #475569; margin-bottom: 4px;">Scan Kode QRIS di bawah ini untuk membayar</p>
@@ -102,7 +103,7 @@
       </div>
 
       <button onclick="confirmQrisPayment()" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #ee2737, #ec4899); border: none; box-shadow: 0 4px 12px rgba(238, 39, 55, 0.4);">
-        ✓ Konfirmasi Pembayaran QRIS Selesai
+        <i data-lucide="check-circle-2"></i> Konfirmasi Pembayaran QRIS Selesai
       </button>
       
       <button onclick="closeQrisModal()" style="margin-top: 12px; background: none; border: none; color: #64748b; font-size: 0.88rem; cursor: pointer; width: 100%; font-weight: 600;">
@@ -223,11 +224,13 @@
             onError: function(result) {
               Utils.showToast("Pembayaran gagal. Silakan coba lagi.", "error");
               btn.disabled = false;
-              btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+              btn.innerHTML = '<i data-lucide="credit-card"></i> Bayar Sekarang via Midtrans Snap';
+              if (window.lucide) lucide.createIcons();
             },
             onClose: function() {
               btn.disabled = false;
-              btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+              btn.innerHTML = '<i data-lucide="credit-card"></i> Bayar Sekarang via Midtrans Snap';
+              if (window.lucide) lucide.createIcons();
             }
           });
         } else {
@@ -240,7 +243,8 @@
         console.warn("Edge Function call fallback to QRIS modal:", err);
         Utils.showToast("Membuka Kode QRIS Pembayaran...", "info");
         btn.disabled = false;
-        btn.innerText = "💳 Bayar Sekarang via Midtrans Snap";
+        btn.innerHTML = '<i data-lucide="credit-card"></i> Bayar Sekarang via Midtrans Snap';
+        if (window.lucide) lucide.createIcons();
         openQrisModal();
       }
     }

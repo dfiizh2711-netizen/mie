@@ -6,6 +6,7 @@
   <title>Detail Pesanan - Mie Gacoan</title>
   <link rel="stylesheet" href="../css/main.css" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
 
@@ -26,7 +27,7 @@
         </nav>
         <div class="desktop-header-actions">
           <a href="cart.html" class="cart-icon-btn">
-            🛒 <span class="cart-badge-count cart-count-badge">0</span>
+            <i data-lucide="shopping-cart"></i> <span class="cart-badge-count cart-count-badge">0</span>
           </a>
         </div>
       </div>
@@ -35,7 +36,7 @@
     <!-- Mobile Header Navigation -->
     <header class="app-header hide-on-desktop">
       <div style="display: flex; align-items: center; gap: 10px;">
-        <a href="orders.html" class="icon-btn">←</a>
+        <a href="orders.html" class="icon-btn"><i data-lucide="arrow-left"></i></a>
         <h1 class="header-title">Detail & Lacak Pesanan</h1>
       </div>
     </header>
@@ -52,7 +53,7 @@
       <!-- Realtime Status Progress Stepper -->
       <div class="card" style="padding: 20px;">
         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 18px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-          <span>🔄</span> Status Realtime Pesanan
+          <span><i data-lucide="refresh-cw"></i></span> Status Realtime Pesanan
         </h4>
         <div id="statusStepper" style="display: flex; justify-content: space-between; position: relative;">
           <!-- JS Rendered Progress Steps -->
@@ -62,7 +63,7 @@
       <!-- Item Breakdown Table Card -->
       <div class="card" style="padding: 20px;">
         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-          <span>🍽️</span> Rincian Item Pesanan
+          <span><i data-lucide="utensils"></i></span> Rincian Item Pesanan
         </h4>
         <div id="detItemsList" style="display: flex; flex-direction: column; gap: 12px;">
           <!-- JS Rendered Items -->
@@ -72,7 +73,7 @@
       <!-- Financial Calculations Breakdown Card -->
       <div class="card" style="padding: 20px;">
         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-          <span>🧾</span> Struk Transaksi
+          <span><i data-lucide="receipt"></i></span> Struk Transaksi
         </h4>
         <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.875rem; color: var(--text-secondary);">
           <div style="display: flex; justify-content: space-between;">
@@ -187,7 +188,7 @@
         return `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; text-align: center;">
             <div style="width: 32px; height: 32px; border-radius: 50%; background: ${isDone ? 'var(--primary-pink)' : '#e2e8f0'}; color: ${isDone ? 'white' : '#94a3b8'}; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 800; border: ${isCurrent ? '4px solid #fce4ec' : 'none'}; box-shadow: ${isDone ? '0 2px 8px rgba(233, 30, 99, 0.3)' : 'none'};">
-              ${isDone ? '✓' : idx + 1}
+              ${isDone ? '<i data-lucide="check-circle-2"></i>' : idx + 1}
             </div>
             <span style="font-size: 0.725rem; font-weight: ${isDone ? '700' : '500'}; color: ${isDone ? 'var(--text-primary)' : 'var(--text-muted)'};">${s.label}</span>
           </div>

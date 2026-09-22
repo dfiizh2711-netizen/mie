@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Registrasi Akun - Mie Gacoan</title>
   <link rel="stylesheet" href="css/main.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="dashboard-container" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; justify-content: center; align-items: center; padding: 24px 16px;">
@@ -14,8 +15,8 @@
     <div class="card card-dark" style="padding: 32px 24px; border: 1px solid var(--border-dark); box-shadow: var(--shadow-xl); background: rgba(30, 41, 59, 0.95); backdrop-filter: blur(12px); border-radius: var(--radius-lg);">
       
       <div style="text-align: center; margin-bottom: 24px;">
-        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--primary-pink), #c2185b); box-shadow: 0 8px 24px rgba(233, 30, 99, 0.35); font-size: 1.8rem; margin-bottom: 14px;">
-          🌶️
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; border-radius: 20px; background: linear-gradient(135deg, var(--primary-pink), #c2185b); box-shadow: 0 8px 24px rgba(233, 30, 99, 0.35); font-size: 1.8rem; margin-bottom: 14px; color: white;">
+          <i data-lucide="flame" style="width: 32px; height: 32px;"></i>
         </div>
         <h2 style="font-size: 1.6rem; font-weight: 900; color: white; margin-bottom: 6px;">Buat Akun Baru</h2>
         <p style="color: var(--text-dark-subtle); font-size: 0.88rem;">Dapatkan kemudahan pesan & promo eksklusif Mie Gacoan</p>
@@ -42,8 +43,8 @@
           <input type="password" id="regPassword" required minlength="6" placeholder="Minimal 6 karakter" class="form-input" />
         </div>
 
-        <button type="submit" id="btnRegisterSubmit" class="btn btn-primary" style="margin-top: 8px; padding: 14px; font-size: 1rem;">
-          Daftar Sekarang →
+        <button type="submit" id="btnRegisterSubmit" class="btn btn-primary" style="margin-top: 8px; padding: 14px; font-size: 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>Daftar Sekarang</span> <i data-lucide="arrow-right"></i>
         </button>
       </form>
 
@@ -81,7 +82,8 @@
       } catch (err) {
         Utils.showToast(err.message || "Gagal registrasi akun.", "error");
         btn.disabled = false;
-        btn.innerText = "Daftar Sekarang →";
+        btn.innerHTML = '<span>Daftar Sekarang</span> <i data-lucide="arrow-right"></i>';
+        if (window.lucide) lucide.createIcons();
       }
     });
   </script>
