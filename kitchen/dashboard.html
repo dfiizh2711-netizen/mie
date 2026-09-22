@@ -102,13 +102,23 @@
       // Process kitchen_orders first (exclude completed/cancelled master orders)
       if (koList) {
         koList.forEach(ko => {
-          if (ko.orders && !["COMPLETED", "CANCELLED", "EXPIRED", "REFUNDED"].includes(ko.orders.order_status)) {
-            processedOrderIds.add(ko.order_id);
-            tickets.push(ko);
-          } else if (ko.orders && ["COMPLETED", "CANCELLED", "EXPIRED", "REFUNDED"].includes(ko.orders.order_status)) {
-            // Clean up stale kitchen_orders status in DB
-            sb.from("kitchen_orders").update({ status: ko.orders.order_status }).eq("id", ko.id);
+          const masterStatus = ko.orders?.order_status;
+          if (masterStatus === "COMPLETED" || masterStatus === "CANCELLED" || masterStatus === "EXPIRED" || masterStatus === "REFUNDED" || ko.status === "COMPLETED") {
+            if (ko.status !== masterStatus && masterStatus) {
+              sb.from("kitchen_orders").update({ status: masterStatus }).eq("id", ko.id);
+            }
+            return;
           }
+
+          let effectiveStatus = ko.status;
+          if (masterStatus === "PREPARING" && ko.status === "NEW") effectiveStatus = "PREPARING";
+          if (masterStatus === "READY" && ko.status !== "READY") effectiveStatus = "READY";
+
+          processedOrderIds.add(ko.order_id);
+          tickets.push({
+            ...ko,
+            status: effectiveStatus
+          });
         });
       }
 
@@ -244,16 +254,14 @@
       // 1. Update master order status in 'orders' table
       await sb.from("orders").update({ order_status: mappedStatus }).eq("id", targetOrderId);
 
-      // 2. Update or insert ticket in 'kitchen_orders' table
+      // 2. Update or insert ticket in 'kitchen_orders' table by order_id
       const payload = { status: newStatus };
       if (newStatus === 'PREPARING') payload.started_at = new Date().toISOString();
       if (newStatus === 'READY') payload.ready_at = new Date().toISOString();
       if (newStatus === 'COMPLETED') payload.completed_at = new Date().toISOString();
 
-      const { data: existingKo } = await sb.from("kitchen_orders").select("id").eq("order_id", targetOrderId).maybeSingle();
-      if (existingKo) {
-        await sb.from("kitchen_orders").update(payload).eq("id", existingKo.id);
-      } else {
+      const { data: updatedKo } = await sb.from("kitchen_orders").update(payload).eq("order_id", targetOrderId).select();
+      if (!updatedKo || updatedKo.length === 0) {
         await sb.from("kitchen_orders").insert({
           order_id: targetOrderId,
           status: newStatus,
