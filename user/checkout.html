@@ -209,6 +209,9 @@
         const { error: itemsErr } = await sb.from("order_items").insert(orderItemsData);
         if (itemsErr) throw itemsErr;
 
+        // Auto sync kitchen ticket for new order
+        await Utils.syncKitchenTicket(order.id);
+
         // Save Customer Info in localStorage for Payment Step
         sessionStorage.setItem("checkout_customer", JSON.stringify({ name, phone, email }));
 
