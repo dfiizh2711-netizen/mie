@@ -136,11 +136,21 @@ const Utils = {
     if (!orderId) return;
     try {
       const sb = getSupabase();
+      // Check master order status first
+      const { data: order } = await sb.from("orders").select("order_status").eq("id", orderId).maybeSingle();
+      if (!order || ["COMPLETED", "CANCELLED", "EXPIRED", "REFUNDED"].includes(order.order_status)) {
+        return; // Do not sync kitchen ticket for completed or cancelled orders
+      }
+
       const { data: existingKo } = await sb.from("kitchen_orders").select("id").eq("order_id", orderId).maybeSingle();
       if (!existingKo) {
+        let initialStatus = "NEW";
+        if (order.order_status === "PREPARING") initialStatus = "PREPARING";
+        else if (order.order_status === "READY") initialStatus = "READY";
+
         const { data: newKo, error: koErr } = await sb.from("kitchen_orders").insert({
           order_id: orderId,
-          status: "NEW"
+          status: initialStatus
         }).select().single();
 
         if (newKo && !koErr) {
@@ -152,7 +162,7 @@ const Utils = {
               product_name: it.product_name,
               quantity: it.quantity,
               notes: it.notes || "",
-              status: "NEW"
+              status: initialStatus
             }));
             await sb.from("kitchen_order_items").insert(koItems);
           }

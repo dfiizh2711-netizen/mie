@@ -105,6 +105,9 @@
           if (ko.orders && !["COMPLETED", "CANCELLED", "EXPIRED", "REFUNDED"].includes(ko.orders.order_status)) {
             processedOrderIds.add(ko.order_id);
             tickets.push(ko);
+          } else if (ko.orders && ["COMPLETED", "CANCELLED", "EXPIRED", "REFUNDED"].includes(ko.orders.order_status)) {
+            // Clean up stale kitchen_orders status in DB
+            sb.from("kitchen_orders").update({ status: ko.orders.order_status }).eq("id", ko.id);
           }
         });
       }
